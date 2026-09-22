@@ -11,7 +11,7 @@
 
 <body>
     <section class="login-box" id="login">
-        <section class="satu">
+        <section class="satu" id="bagian-satu">
             <h1>
                 Monitoring Metro
             </h1>
@@ -22,7 +22,7 @@
                 Monitoring Website Kota Metro
             </div>
         </section>
-        <section class="dua">
+        <section class="dua" id="bagian-dua">
             <h1>
                 Login
             </h1>
@@ -73,7 +73,7 @@
     </section>
 
     <section id="register" class="login-box" style="display: none;">
-        <section class="satu r-s">
+        <section class="satu r-s" id="bagian-dua">
             <h1>
                 Register
             </h1>
@@ -119,7 +119,7 @@
 
             </form>
         </section>
-        <section class="dua r-d">
+        <section class="dua r-d" id="bagian-satu">
             <h1>
                 Monitoring Metro
             </h1>
