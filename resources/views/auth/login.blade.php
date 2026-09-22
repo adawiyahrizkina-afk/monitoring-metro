@@ -61,7 +61,7 @@
                     required>
 
                 <span class="register-text">
-                    jika belum memiliki akun, silahkan <span onclick="showRegister()" class="link">daftar</span>
+                    jika belum memiliki akun, silahkan <span onclick="pindah()" class="link">daftar</span>
                 </span>
 
                 <button type="submit">
@@ -110,7 +110,7 @@
                     required>
 
                 <span class="register-text">
-                    jika sudah memiliki akun, silahkan <span onclick="showLogin()" class="link">login</span>
+                    jika sudah memiliki akun, silahkan <span onclick="pindah()" class="link">login</span>
                 </span>
 
                 <button type="submit">
