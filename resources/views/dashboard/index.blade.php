@@ -601,7 +601,7 @@
 <!-- ================= SIDEBAR ================= -->
 
 <aside class="sidebar">
-
+<h1>judul</h1>
     <div class="logo">
 
         <div class="logo-icon">
