@@ -122,22 +122,6 @@
             </section>
         </section>
     </section>
-
-    <!-- <section id="register" class="login-box">
-        
-        <section class="dua r-d" id="bagian-satu">
-            <h1>
-                Monitoring Metro
-            </h1>
-
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/LOGO_KOTA_METRO.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original" alt="logo">
-
-            <div class="subtitle">
-                Monitoring Website Kota Metro
-            </div>
-        </section>
-    </section> -->
-
     <script src="/js/login.js"></script>
 </body>
 

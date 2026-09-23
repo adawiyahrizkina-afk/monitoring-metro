@@ -1,5 +1,6 @@
 :root {
     --biru: #0d1282;
+    --biru-light: #647FBC;
     --putih: #eeeded;
     --kuning: #f0de36;
     --merah: #d71313;
@@ -165,14 +166,14 @@ button {
     padding: 12px;
     border: none;
     border-radius: 7px;
-    background: #2e7d32;
+    background: var(--biru);
     color: white;
     font-size: 16px;
     cursor: pointer;
 }
 
 button:hover {
-    background: #1b5e20;
+    background: var(--biru-light);
 }
 
 .error {
