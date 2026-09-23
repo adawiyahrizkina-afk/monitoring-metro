@@ -23,7 +23,7 @@ class WebsiteController extends Controller
         $websites = Website::latest()->get();
 
         return view(
-            'dashboard.index',
+            'dashboard.admin.index',
             compact(
                 'total',
                 'online',

@@ -61,27 +61,20 @@ class MonitoringController extends Controller
                 $response->status() >= 200 &&
                 $response->status() < 400
             ) {
-
                 $status = 'Online';
-
                 $keterangan =
                     'Website dapat diakses.';
 
             } else {
-
                 $status = 'Offline';
-
                 $keterangan =
                     'Website memberikan HTTP status ' .
                     $response->status();
             }
 
         } catch (\Exception $e) {
-
             $status = 'Offline';
-
             $responseTime = null;
-
             $keterangan =
                 'Website tidak dapat diakses.';
         }
@@ -92,13 +85,9 @@ class MonitoringController extends Controller
          */
 
         $website->update([
-
             'status' => $status,
-
             'response_time' => $responseTime,
-
             'last_checked_at' => now(),
-
         ]);
 
 
@@ -107,17 +96,11 @@ class MonitoringController extends Controller
          */
 
         MonitoringLog::create([
-
             'website_id' => $website->id,
-
             'status' => $status,
-
             'response_time' => $responseTime,
-
             'checked_at' => now(),
-
             'keterangan' => $keterangan,
-
         ]);
     }
 }

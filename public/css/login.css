@@ -8,6 +8,7 @@
 
 * {
     box-sizing: border-box;
+    user-select: var(--merah);
 }
 
 body {
@@ -36,21 +37,6 @@ body {
 
 .parent img {
     width: 10dvw;
-}
-
-/* Bagian dalam parent */
-.head{
-    position: absolute;
-    max-width: 50%;
-    z-index: 1;
-}
-
-.register{
-    z-index: -1;
-}
-
-.login{
-    z-index: 2;
 }
 
 /* Bagian kiri */
@@ -88,52 +74,6 @@ body {
     display: flex;
     flex-direction: column;
     border-radius: 0 20px 20px 0;
-}
-
-/* Bagian switch */
-.animasi-jalan {
-    animation: switch 0.8s ease-in forwards;
-}
-
-/* Bagian switch kembali */
-.animasi-kembali {
-    animation: switch-back 0.8s ease-in forwards;
-}
-
-@keyframes switch {
-    0% {
-        transform: translateX(0);
-        max-width: 50%;
-        border-radius: 20px 0 0 20px;
-    }
-    50% {
-        transform: translateX(0);
-        max-width: 70%;
-        border-radius: 20px 20px 20px 20px; 
-    }
-    100% {
-        transform: translateX(100%);
-        max-width: 50%;
-        border-radius: 0 20px 20px 0;
-    }
-}
-
-@keyframes switch-back {
-    0% {
-        transform: translateX(100%);
-        max-width: 50%;
-        border-radius: 0 20px 20px 0;
-    }
-    50% {
-        transform: translateX(0);
-        max-width: 70%;
-        border-radius: 20px 20px 20px 20px;
-    }
-    100% {
-        transform: translateX(0);
-        max-width: 50%;
-        border-radius: 20px 0 0 20px;
-    }
 }
 
 .link {

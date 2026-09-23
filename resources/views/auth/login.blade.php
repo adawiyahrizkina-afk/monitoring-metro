@@ -12,62 +12,26 @@
 <body>
     <section class="container">
         <section class="parent">
-
-            <section class="satu r-s register" id="register">
+            <section class="satu head" id="head">
                 <h1>
-                    Register
+                    Monitoring Metro
                 </h1>
-                @if(session('error'))
 
-                <div class="error">
-                    {{ session('error') }}
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/LOGO_KOTA_METRO.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original" alt="logo">
+
+                <div class="subtitle">
+                    Monitoring Website Kota Metro
                 </div>
-
-                @endif
-
-                <form action="" method="POST">
-
-                    @csrf
-
-                    <label>
-                        Email
-                    </label>
-
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Masukkan email"
-                        required>
-
-                    <label>
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Masukkan password"
-                        required>
-
-                    <span class="register-text">
-                        jika sudah memiliki akun, silahkan <span onclick="pindah()" class="link">login</span>
-                    </span>
-
-                    <button type="submit">
-                        LOGIN
-                    </button>
-
-                </form>
             </section>
 
             <section class="dua login" id="login">
                 <h1>
                     Login
                 </h1>
-                @if(session('error'))
+                @if(session('error-login'))
 
                 <div class="error">
-                    {{ session('error') }}
+                    {{ session('error-login') }}
                 </div>
 
                 @endif
@@ -98,10 +62,6 @@
                         placeholder="Masukkan password"
                         required>
 
-                    <span class="register-text">
-                        jika belum memiliki akun, silahkan <span onclick="pindah()" class="link">daftar</span>
-                    </span>
-
                     <button type="submit">
                         LOGIN
                     </button>
@@ -109,17 +69,7 @@
                 </form>
             </section>
 
-            <section class="satu head" id="head">
-                <h1>
-                    Monitoring Metro
-                </h1>
 
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/LOGO_KOTA_METRO.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original" alt="logo">
-
-                <div class="subtitle">
-                    Monitoring Website Kota Metro
-                </div>
-            </section>
         </section>
     </section>
     <script src="/js/login.js"></script>
