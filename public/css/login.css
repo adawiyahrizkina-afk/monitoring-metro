@@ -12,20 +12,44 @@
 body {
     margin: 0;
     min-height: 100dvh;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 /* Bagian container */
 
-.login-box {
-    display: flex;
-    min-height: 100dvh;
+.container {
+    max-width: 100dvw;
+    max-height: 100dvh;
+    padding: 50px;
     align-items: center;
     justify-content: center;
-    padding-inline: 10dvw;
 }
 
-.login-box img {
+/* Bagian parent */
+
+.parent{
+    display: flex;
+    position: relative;
+}
+
+.parent img {
     width: 10dvw;
+}
+
+/* Bagian dalam parent */
+.head{
+    position: absolute;
+    max-width: 50%;
+    z-index: 1;
+}
+
+.register{
+    z-index: -1;
+}
+
+.login{
+    z-index: 2;
 }
 
 /* Bagian kiri */
@@ -42,8 +66,7 @@ body {
     display: flex;
     flex-direction: column;
     border-radius: 20px 0 0 20px;
-    z-index: 1;
-    transform-origin: center;
+    z-index: 2;
 }
 
 .r-s {
@@ -66,56 +89,49 @@ body {
     border-radius: 0 20px 20px 0;
 }
 
-.r-d {
-    background: var(--biru);
-    color: white;
-}
-
 /* Bagian switch */
 .animasi-jalan {
-    animation: switch 0.8s ease forwards;
+    animation: switch 0.8s ease-in forwards;
 }
 
-/* Class mundur */
+/* Bagian switch kembali */
 .animasi-kembali {
-    animation: switch-back 0.8s ease forwards;
+    animation: switch-back 0.8s ease-in forwards;
 }
 
 @keyframes switch {
     0% {
-        transform: translateX(0) scalex(1);
-        border-radius: 20px 20px 20px 20px;
-        object-fit: cover;
-        #register {
-            display: flex;
-        }
+        transform: translateX(0);
+        max-width: 50%;
+        border-radius: 20px 0 0 20px;
     }
     50% {
-        transform: translateX(50%) scalex(2.0);
-        border-radius: 20px 20px 20px 20px;
-        object-fit: cover;
-        #register {
-            display: flex;
-        }  
+        transform: translateX(0);
+        max-width: 70%;
+        border-radius: 20px 20px 20px 20px; 
     }
     100% {
-        transform: translateX(100%) scalex(1);
+        transform: translateX(100%);
+        max-width: 50%;
         border-radius: 0 20px 20px 0;
-        #register {
-            display: flex;
-        }
     }
 }
 
 @keyframes switch-back {
     0% {
-        transform: translateX(100%) scalex(1);
+        transform: translateX(100%);
+        max-width: 50%;
+        border-radius: 0 20px 20px 0;
     }
     50% {
-        transform: translateX(0) scalex(0);
+        transform: translateX(0);
+        max-width: 70%;
+        border-radius: 20px 20px 20px 20px;
     }
     100% {
-        transform: translateX(0) scalex(1);
+        transform: translateX(0);
+        max-width: 50%;
+        border-radius: 20px 0 0 20px;
     }
 }
 

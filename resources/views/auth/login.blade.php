@@ -10,115 +10,121 @@
 </head>
 
 <body>
-    <section class="login-box" id="login">
-        <section class="satu" id="bagian-satu">
-            <h1>
-                Monitoring Metro
-            </h1>
+    <section class="container">
+        <section class="parent">
 
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/LOGO_KOTA_METRO.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original" alt="logo">
+            <section class="satu r-s register" id="register">
+                <h1>
+                    Register
+                </h1>
+                @if(session('error'))
 
-            <div class="subtitle">
-                Monitoring Website Kota Metro
-            </div>
-        </section>
-        <section class="dua" id="bagian-dua">
-            <h1>
-                Login
-            </h1>
-            @if(session('error'))
+                <div class="error">
+                    {{ session('error') }}
+                </div>
 
-            <div class="error">
-                {{ session('error') }}
-            </div>
+                @endif
 
-            @endif
+                <form action="" method="POST">
 
-            <form
-                action="{{ route('login.process') }}"
-                method="POST">
+                    @csrf
 
-                @csrf
+                    <label>
+                        Email
+                    </label>
 
-                <label>
-                    Email
-                </label>
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Masukkan email"
+                        required>
 
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Masukkan email"
-                    required>
+                    <label>
+                        Password
+                    </label>
 
-                <label>
-                    Password
-                </label>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Masukkan password"
+                        required>
 
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Masukkan password"
-                    required>
+                    <span class="register-text">
+                        jika sudah memiliki akun, silahkan <span onclick="pindah()" class="link">login</span>
+                    </span>
 
-                <span class="register-text">
-                    jika belum memiliki akun, silahkan <span onclick="pindah()" class="link">daftar</span>
-                </span>
+                    <button type="submit">
+                        LOGIN
+                    </button>
 
-                <button type="submit">
-                    LOGIN
-                </button>
+                </form>
+            </section>
 
-            </form>
+            <section class="dua login" id="login">
+                <h1>
+                    Login
+                </h1>
+                @if(session('error'))
+
+                <div class="error">
+                    {{ session('error') }}
+                </div>
+
+                @endif
+
+                <form
+                    action="{{ route('login.process') }}"
+                    method="POST">
+
+                    @csrf
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Masukkan email"
+                        required>
+
+                    <label>
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Masukkan password"
+                        required>
+
+                    <span class="register-text">
+                        jika belum memiliki akun, silahkan <span onclick="pindah()" class="link">daftar</span>
+                    </span>
+
+                    <button type="submit">
+                        LOGIN
+                    </button>
+
+                </form>
+            </section>
+
+            <section class="satu head" id="head">
+                <h1>
+                    Monitoring Metro
+                </h1>
+
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/LOGO_KOTA_METRO.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original" alt="logo">
+
+                <div class="subtitle">
+                    Monitoring Website Kota Metro
+                </div>
+            </section>
         </section>
     </section>
 
-    <section id="register" class="login-box" style="display: none;">
-        <section class="satu r-s" id="bagian-dua">
-            <h1>
-                Register
-            </h1>
-            @if(session('error'))
-
-            <div class="error">
-                {{ session('error') }}
-            </div>
-
-            @endif
-
-            <form action="" method="POST">
-
-                @csrf
-
-                <label>
-                    Email
-                </label>
-
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Masukkan email"
-                    required>
-
-                <label>
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Masukkan password"
-                    required>
-
-                <span class="register-text">
-                    jika sudah memiliki akun, silahkan <span onclick="pindah()" class="link">login</span>
-                </span>
-
-                <button type="submit">
-                    LOGIN
-                </button>
-
-            </form>
-        </section>
+    <!-- <section id="register" class="login-box">
+        
         <section class="dua r-d" id="bagian-satu">
             <h1>
                 Monitoring Metro
@@ -130,7 +136,7 @@
                 Monitoring Website Kota Metro
             </div>
         </section>
-    </section>
+    </section> -->
 
     <script src="/js/login.js"></script>
 </body>
