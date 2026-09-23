@@ -1,0 +1,125 @@
+:root {
+    --biru: #0d1282;
+    --biru-light: #647FBC;
+    --putih: #eeeded;
+    --kuning: #f0de36;
+    --merah: #d71313;
+}
+
+* {
+    box-sizing: border-box;
+    user-select: var(--merah);
+}
+
+body {
+    margin: 0;
+    min-height: 100dvh;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+/* Bagian container */
+
+.container {
+    max-width: 100dvw;
+    max-height: 100dvh;
+    padding: 50px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Bagian parent */
+
+.parent{
+    display: flex;
+    position: relative;
+}
+
+.parent img {
+    width: 10dvw;
+}
+
+/* Bagian kiri */
+
+.satu {
+    width: 100%;
+    background: var(--biru);
+    color: white;
+    padding: 40px;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px 0 0 20px;
+    z-index: 2;
+}
+
+.r-s {
+    background: var(--putih);
+    color: black;
+}
+
+/* Bagian kanan */
+
+.dua {
+    width: 100%;
+    background: var(--putih);
+    color: black;
+    padding: 40px;
+    height: 80vh;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 20px 20px 0;
+}
+
+.link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.register-text {
+    padding: 10px 0;
+    align-items: center;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    margin-bottom: 18px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 7px;
+    background: var(--biru);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--biru-light);
+}
+
+.error {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}

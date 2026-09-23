@@ -12,6 +12,8 @@ class AdminController extends Controller
         return view('auth.login');
     }
 
+    // Bagian login
+
     public function authenticate(Request $request)
     {
         $credentials = $request->validate([
@@ -27,10 +29,15 @@ class AdminController extends Controller
         }
 
         return back()->with(
-            'error',
+            'error-login',
             'Email atau password salah.'
         );
     }
+
+    // Bagian register
+    
+
+    // Bagian logout
 
     public function logout(Request $request)
     {
