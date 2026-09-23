@@ -12,21 +12,18 @@ return new class extends Migration
             $table->id();
 
             $table->string('nama_website');
-
             $table->string('instansi');
-
             $table->text('url');
 
-            $table->enum('status', [
-                'Online',
-                'Offline'
-            ])->default('Offline');
+            $table->string('status')->default('Belum Dicek');
 
             $table->integer('response_time')->nullable();
 
-            $table->boolean('monitoring_aktif')->default(true);
+            $table->boolean('monitoring_aktif')
+                ->default(true);
 
-            $table->timestamp('last_checked_at')->nullable();
+            $table->timestamp('last_checked_at')
+                ->nullable();
 
             $table->timestamps();
         });

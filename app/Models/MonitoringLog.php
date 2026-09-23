@@ -20,6 +20,8 @@ class MonitoringLog extends Model
 
     public function website()
     {
-        return $this->belongsTo(Website::class);
+        return $this->belongsTo(
+            Website::class
+        );
     }
 }

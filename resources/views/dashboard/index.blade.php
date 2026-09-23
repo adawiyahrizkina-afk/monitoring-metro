@@ -1,567 +1,395 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Monitoring Website Kota Metro</title>
+    <title>Dashboard Monitoring Website Kota Metro</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f4f8f6;
-            color: #263238;
+            font-family: Arial, sans-serif;
+            background: #f3f8f6;
+            color: #17324d;
         }
 
-        /* ================= SIDEBAR ================= */
-
+        /* SIDEBAR */
         .sidebar {
             position: fixed;
-            left: 0;
             top: 0;
-
-            width: 245px;
+            left: 0;
+            width: 290px;
             height: 100vh;
-
-            background: #064e3b;
+            padding: 25px 16px;
+            background: #075c49;
             color: white;
-
-            padding: 25px 15px;
         }
 
         .logo {
+            padding-bottom: 22px;
             text-align: center;
-
-            border-bottom: 1px solid
-                rgba(255,255,255,.15);
-
-            padding-bottom: 25px;
-
-            margin-bottom: 25px;
-        }
-
-        .logo-icon {
-            font-size: 40px;
+            border-bottom: 1px solid rgba(255,255,255,.2);
         }
 
         .logo h2 {
-            margin: 8px 0 3px;
-
-            font-size: 19px;
+            margin: 10px 0 5px;
+            font-size: 24px;
+            line-height: 1.2;
         }
 
         .logo p {
             margin: 0;
-
-            font-size: 12px;
-
-            color: #b7d8cc;
+            color: #d5f5eb;
+            font-size: 14px;
         }
 
         .menu-title {
-            font-size: 11px;
-
-            color: #9fc7ba;
-
-            margin: 20px 12px 8px;
-
+            margin: 25px 14px 10px;
+            color: #a8d8cc;
+            font-size: 13px;
             text-transform: uppercase;
         }
 
-        .menu {
+        .menu a {
             display: block;
-
-            text-decoration: none;
-
-            color: #dceee8;
-
-            padding: 13px 14px;
-
-            border-radius: 8px;
-
             margin-bottom: 5px;
-
-            font-size: 14px;
-        }
-
-        .menu:hover,
-        .menu.active {
-            background: #16865f;
-
+            padding: 14px 16px;
+            border-radius: 9px;
             color: white;
+            text-decoration: none;
         }
 
-        .sidebar-bottom {
+        .menu a:hover,
+        .menu a.active {
+            background: #178c68;
+        }
+
+        .logout {
             position: absolute;
-
-            bottom: 20px;
-
-            left: 15px;
-
-            right: 15px;
+            bottom: 25px;
+            left: 30px;
         }
 
+        .logout button {
+            padding: 0;
+            border: 0;
+            background: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-        /* ================= MAIN ================= */
-
+        /* MAIN */
         .main {
-            margin-left: 245px;
-
             min-height: 100vh;
+            margin-left: 290px;
         }
-
-
-        /* ================= TOPBAR ================= */
 
         .topbar {
-            height: 70px;
-
-            background: white;
-
-            border-bottom: 1px solid #e5e7eb;
-
+            height: 80px;
+            padding: 0 35px;
             display: flex;
-
             align-items: center;
-
             justify-content: space-between;
-
-            padding: 0 30px;
+            background: white;
+            border-bottom: 1px solid #e2e8e5;
         }
 
         .topbar-left {
-            font-size: 14px;
-
-            color: #64748b;
+            color: #55708c;
         }
 
         .topbar-right {
             display: flex;
-
             align-items: center;
-
-            gap: 15px;
+            gap: 20px;
         }
 
         .monitoring-active {
-            display: flex;
-
-            align-items: center;
-
-            gap: 7px;
-
-            font-size: 13px;
-
-            color: #15803d;
+            color: #087c54;
         }
 
-        .green-dot {
+        .monitoring-active span {
+            display: inline-block;
             width: 9px;
             height: 9px;
-
+            margin-right: 6px;
             border-radius: 50%;
-
-            background: #22c55e;
+            background: #20b978;
         }
 
-        .admin {
+        .admin-name {
             font-weight: bold;
-
-            color: #334155;
         }
-
-
-        /* ================= CONTENT ================= */
 
         .content {
-            padding: 30px;
+            padding: 30px 35px;
         }
 
-        .heading {
+        /* HEADER */
+        .page-header {
             display: flex;
-
-            justify-content: space-between;
-
             align-items: center;
-
-            margin-bottom: 25px;
+            justify-content: space-between;
+            margin-bottom: 22px;
         }
 
-        .heading h1 {
+        .page-header h1 {
+            margin: 0 0 6px;
+            color: #075c49;
+            font-size: 32px;
+        }
+
+        .page-header p {
             margin: 0;
-
-            color: #064e3b;
-
-            font-size: 28px;
+            color: #55708c;
+            font-size: 17px;
         }
 
-        .heading p {
-            margin: 7px 0 0;
-
-            color: #64748b;
-
-            font-size: 14px;
-        }
-
-        .heading-actions {
+        .header-buttons {
             display: flex;
-
             gap: 10px;
         }
 
-        button,
         .btn {
-            border: none;
-
-            cursor: pointer;
-
-            border-radius: 7px;
-
-            padding: 11px 17px;
-
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 8px;
             font-size: 14px;
-
+            font-weight: bold;
             text-decoration: none;
+            cursor: pointer;
         }
 
-        .btn-green {
-            background: #16865f;
-
+        .btn-check-all {
+            border: 0;
+            background: #168c68;
             color: white;
         }
 
-        .btn-green:hover {
-            background: #0f704f;
+        .btn-check-all:hover {
+            background: #0d7555;
         }
 
-        .btn-white {
+        .btn-add {
+            border: 1px solid #ccd7d3;
             background: white;
-
-            border: 1px solid #d1d5db;
-
-            color: #334155;
+            color: #17324d;
         }
 
-
-        /* ================= ALERT ================= */
-
+        /* ALERT */
         .alert {
-            padding: 13px 16px;
-
+            margin-bottom: 22px;
+            padding: 14px 18px;
+            border: 1px solid #b8ebc9;
             border-radius: 8px;
-
-            margin-bottom: 20px;
-
-            background: #e8f5e9;
-
-            color: #166534;
-
-            border: 1px solid #bbf7d0;
+            background: #e6f8ec;
+            color: #087c54;
         }
 
-
-        /* ================= STAT CARDS ================= */
-
-        .stats {
+        /* STATISTICS */
+        .statistics {
             display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
-            gap: 18px;
-
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
             margin-bottom: 25px;
         }
 
         .stat-card {
+            padding: 25px;
+            border-radius: 13px;
             background: white;
-
-            border-radius: 12px;
-
-            padding: 22px;
-
-            box-shadow:
-                0 3px 12px rgba(0,0,0,.06);
-
-            border: 1px solid #edf2ef;
-        }
-
-        .stat-top {
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
         }
 
         .stat-title {
-            color: #64748b;
-
-            font-size: 14px;
-
+            margin-bottom: 18px;
+            color: #58718a;
+            font-size: 16px;
             font-weight: bold;
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 10px;
-
-            font-size: 20px;
-        }
-
-        .icon-total {
-            background: #dbeafe;
-        }
-
-        .icon-online {
-            background: #dcfce7;
-        }
-
-        .icon-offline {
-            background: #fee2e2;
         }
 
         .stat-number {
-            font-size: 34px;
-
+            font-size: 40px;
             font-weight: bold;
-
-            margin-top: 15px;
         }
 
-        .number-online {
-            color: #16a34a;
+        .total {
+            color: #17324d;
         }
 
-        .number-offline {
-            color: #dc2626;
+        .online-number {
+            color: #0aa568;
         }
 
+        .offline-number {
+            color: #df2929;
+        }
 
-        /* ================= WEBSITE TABLE ================= */
-
-        .website-box {
+        /* TABLE */
+        .website-container {
+            padding: 25px 30px;
+            border-radius: 13px;
             background: white;
-
-            border-radius: 12px;
-
-            padding: 25px;
-
-            box-shadow:
-                0 3px 12px rgba(0,0,0,.06);
-
-            border: 1px solid #edf2ef;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
         }
 
         .table-header {
             display: flex;
-
-            justify-content: space-between;
-
             align-items: center;
-
+            justify-content: space-between;
             margin-bottom: 20px;
         }
 
         .table-header h2 {
             margin: 0;
-
-            color: #1e293b;
-
-            font-size: 20px;
+            color: #17324d;
+            font-size: 24px;
         }
 
         .search {
             width: 300px;
-
-            padding: 11px 14px;
-
-            border: 1px solid #d1d5db;
-
-            border-radius: 7px;
-
+            padding: 11px 15px;
+            border: 1px solid #ccd7d3;
+            border-radius: 8px;
             outline: none;
         }
 
         .search:focus {
-            border-color: #16865f;
+            border-color: #168c68;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
-
+            min-width: 1000px;
             border-collapse: collapse;
         }
 
         th {
-            background: #e8f5e9;
-
-            color: #166534;
-
-            padding: 13px 12px;
-
-            font-size: 13px;
-
+            padding: 14px;
+            background: #e6f4e9;
+            color: #086b4d;
             text-align: left;
+            font-size: 13px;
+            white-space: nowrap;
         }
 
         td {
-            padding: 14px 12px;
-
-            border-bottom: 1px solid #edf0ee;
-
-            font-size: 13px;
+            padding: 14px;
+            border-bottom: 1px solid #e5e9e7;
+            font-size: 14px;
         }
 
         tr:hover {
-            background: #f8faf9;
+            background: #f8fbfa;
         }
 
         .website-name {
             font-weight: bold;
-
-            color: #1e293b;
         }
 
         .url {
-            color: #2563eb;
-
+            display: block;
+            max-width: 230px;
+            overflow: hidden;
+            color: #2463d4;
             text-decoration: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
-            font-size: 12px;
+        .url:hover {
+            text-decoration: underline;
         }
 
         /* STATUS */
-
         .status {
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 6px;
-
-            padding: 5px 10px;
-
+            display: inline-block;
+            padding: 6px 11px;
             border-radius: 20px;
-
             font-size: 12px;
-
             font-weight: bold;
+            white-space: nowrap;
         }
 
         .status-online {
-            background: #dcfce7;
-
-            color: #15803d;
+            background: #d7f8e5;
+            color: #087c54;
         }
 
         .status-offline {
-            background: #fee2e2;
-
-            color: #dc2626;
+            background: #ffe0e0;
+            color: #d92929;
         }
 
-        .status-dot {
-            width: 7px;
-            height: 7px;
-
-            border-radius: 50%;
+        .status-warning {
+            background: #fff0c9;
+            color: #a66a00;
         }
 
-        .dot-online {
-            background: #22c55e;
+        .status-unchecked {
+            background: #e8ecea;
+            color: #65736e;
         }
 
-        .dot-offline {
-            background: #ef4444;
+        /* AKSI */
+        .action-form {
+            margin: 0;
         }
 
-        .check-btn {
-            background: #16865f;
-
+        .btn-action {
+            padding: 8px 16px;
+            border: 0;
+            border-radius: 7px;
+            background: #168c68;
             color: white;
-
-            padding: 7px 12px;
-
-            border-radius: 5px;
-
-            border: none;
-
+            font-size: 13px;
+            font-weight: bold;
             cursor: pointer;
-
-            font-size: 12px;
         }
 
-        .check-btn:hover {
-            background: #0f704f;
+        .btn-action:hover {
+            background: #0d7555;
         }
 
-        .empty {
-            text-align: center;
-
-            padding: 40px;
-
-            color: #64748b;
-        }
-
-
-        /* ================= FOOTER ================= */
-
+        /* FOOTER */
         footer {
-            padding: 25px 30px;
-
-            color: #64748b;
-
-            font-size: 12px;
-
+            padding: 25px;
+            color: #6c8193;
             text-align: center;
+            font-size: 14px;
         }
 
-
-        /* ================= RESPONSIVE ================= */
-
-        @media(max-width: 1000px) {
-
+        /* RESPONSIVE */
+        @media (max-width: 1000px) {
             .sidebar {
-                width: 200px;
+                width: 220px;
             }
 
             .main {
-                margin-left: 200px;
+                margin-left: 220px;
             }
 
-            .stats {
+            .statistics {
                 grid-template-columns: 1fr;
             }
 
-            .heading {
-                display: block;
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 15px;
             }
-
-            .heading-actions {
-                margin-top: 15px;
-            }
-
         }
 
-        @media(max-width: 700px) {
-
+        @media (max-width: 700px) {
             .sidebar {
                 display: none;
             }
@@ -574,483 +402,327 @@
                 padding: 20px;
             }
 
+            .topbar {
+                padding: 0 20px;
+            }
+
+            .topbar-left {
+                display: none;
+            }
+
             .table-header {
-                display: block;
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 15px;
             }
 
             .search {
                 width: 100%;
-
-                margin-top: 15px;
             }
-
-            .website-box {
-                overflow-x: auto;
-            }
-
         }
 
-    </style>
+            .logo {
+    text-align: center;
+}
 
+        .logo-metro {
+        width: 75px !important;
+        height: 75px !important;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 8px auto;
+        }
+
+        .logo h2 {
+        font-size: 22px;
+        line-height: 1.2;
+        margin: 0;
+        }
+
+        .logo p {
+        font-size: 14px;
+        margin-top: 8px;
+        }
+    </style>
 </head>
 
-
 <body>
-
-
-<!-- ================= SIDEBAR ================= -->
-
+<!-- SIDEBAR -->
+<!-- SIDEBAR -->
 <aside class="sidebar">
-<h1>judul</h1>
+
     <div class="logo">
 
-        <div class="logo-icon">
-        </div>
+        <img src="{{ asset('images/logokomet.png') }}"
+             alt="Logo Kota Metro"
+             class="logo-metro">
 
-        <h2>
-            PEMERINTAH KOTA
-            <br>
-            METRO
-        </h2>
-
-        <p>
-            Monitoring Website Kota Metro
-        </p>
+        <h2>PEMERINTAH KOTA<br>METRO</h2>
+        <p>Monitoring Website Kota Metro</p>
 
     </div>
-
-
-    <div class="menu-title">
-        MENU UTAMA
-    </div>
-
-
-    <a
-        href="{{ route('dashboard') }}"
-        class="menu active"
-    >
-        &nbsp; Dashboard
+        <div class="menu">
+    <a href="{{ route('dashboard') }}" class="active">
+        Dashboard
     </a>
 
-
-    <a
-        href="#daftar-website"
-        class="menu"
-    >
-         &nbsp; Daftar Website
+    <a href="{{ route('website.index') }}">
+        Daftar Website
     </a>
 
-
-    <a
-        href="#daftar-website"
-        class="menu"
-    >
-        &nbsp; Monitoring
+    <a href="{{ route('monitoring.index') }}">
+        Monitoring
     </a>
 
-
-    <a
-        href="#"
-        class="menu"
-    >
-        &nbsp; Riwayat Monitoring
+    <a href="{{ route('riwayat.index') }}">
+        Riwayat Monitoring
     </a>
-
-
-    <div class="menu-title">
-        SISTEM
-    </div>
-
-
-    <a
-        href="#"
-        class="menu"
-    >
-        &nbsp; Pengaturan
+</div>
+<div class="menu-title">Sistem</div>
+<div class="menu">
+    <a href="{{ route('pengaturan.index') }}">
+        Pengaturan
     </a>
-
-
-    <div class="sidebar-bottom">
-
-        <form
-            action="{{ route('logout') }}"
-            method="POST"
-        >
-
-            @csrf
-
-            <button
-                type="submit"
-                class="menu"
-                style="
-                    width:100%;
-                    text-align:left;
-                    background:transparent;
-                    color:white;
-                "
-            >
-
-             &nbsp; Logout
-
-            </button>
-
-        </form>
-
-    </div>
-
-</aside>
-
-
-<!-- ================= MAIN ================= -->
-
-<main class="main">
-
-
-    <!-- TOPBAR -->
-
-    <div class="topbar">
-
-        <div class="topbar-left">
-
-            Sistem Monitoring Website
-
+</div>
+        <div class="logout">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit">Logout</button>
+            </form>
         </div>
+    </aside>
 
+    <!-- MAIN -->
+    <main class="main">
 
-        <div class="topbar-right">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">Sistem Monitoring Website</div>
 
-            <div class="monitoring-active">
-
-                <span class="green-dot"></span>
-
-                Monitoring Aktif
-
-            </div>
-
-            <div class="admin">
-
-                {{ Auth::user()->name }}
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- CONTENT -->
-
-    <div class="content">
-
-
-        <!-- HEADING -->
-
-        <div class="heading">
-
-            <div>
-
-                <h1>
-                    Dashboard Monitoring
-                </h1>
-
-                <p>
-                    Pantau kondisi website dan aplikasi
-                    Pemerintah Kota Metro.
-                </p>
-
-            </div>
-
-
-            <div class="heading-actions">
-
-                <form
-                    action="{{ route('website.check.all') }}"
-                    method="POST"
-                >
-
-                    @csrf
-
-                    <button
-                        type="submit"
-                        class="btn btn-green"
-                    >
-                        Cek Semua Website
-                    </button>
-
-                </form>
-
-                <a
-                    href="#"
-                    class="btn btn-white"
-                >
-                    Tambah Website
-                </a>
-
-            </div>
-
-        </div>
-
-
-        <!-- ALERT -->
-        @if(session('success'))
-            <div class="alert">
-                ✅ {{ session('success') }}
-            </div>
-        @endif
-
-        <!-- STATISTIK -->
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-top">
-                    <div class="stat-title">
-                        TOTAL WEBSITE
-                    </div>
-                    
-                    <div class="stat-icon icon-total">
-                    </div>
-
+            <div class="topbar-right">
+                <div class="monitoring-active">
+                    <span></span>Monitoring Aktif
                 </div>
-                <div class="stat-number">
-                    {{ $total }}
+
+                <div class="admin-name">
+                    {{ Auth::user()->name }}
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-top">
-                    <div class="stat-title">
-                        WEBSITE AKTIF
-                    </div>
+        </header>
 
-                    <div class="stat-icon icon-online">
-                        ✓
-                    </div>
-                </div>
-                <div class="stat-number number-online">
-                    {{ $online }}
-                </div>
-            </div>
-            <div class="stat-card">
+        <!-- CONTENT -->
+        <section class="content">
 
-                <div class="stat-top">
-
-                    <div class="stat-title">
-                        WEBSITE TIDAK AKTIF
-                    </div>
-
-                    <div class="stat-icon icon-offline">
-                        ✕
-                    </div>
-                </div>
-                <div class="stat-number number-offline">
-                    {{ $offline }}
-                </div>
-            </div>
-        </div>
-        <!-- WEBSITE -->
-        <div
-            class="website-box"
-            id="daftar-website"
-        >
-            <div class="table-header">
+            <!-- HEADER -->
+            <div class="page-header">
                 <div>
-
-                    <h2>
-                        Daftar Website Kota Metro
-                    </h2>
-
+                    <h1>Dashboard Monitoring</h1>
+                    <p>Pantau kondisi website dan aplikasi Pemerintah Kota Metro.</p>
                 </div>
 
-                <input
-                    type="text"
-                    id="searchWebsite"
-                    class="search"
-                    placeholder="Cari website atau instansi..."
-                >
+                <div class="header-buttons">
+
+                    <form action="{{ route('website.check.all') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-check-all">
+                            ✓ Cek Semua Website
+                        </button>
+                    </form>
+
+                    <a href="{{ route('website.create') }}" class="btn btn-add">
+                        ＋ Tambah Website
+                    </a>
+
+                </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
 
-                        <th>
-                            NO
-                        </th>
+            <!-- ALERT -->
+            @if(session('success'))
+                <div class="alert">
+                    ✓ {{ session('success') }}
+                </div>
+            @endif
 
-                        <th>
-                            NAMA WEBSITE
-                        </th>
+            <!-- STATISTICS -->
+            @php
+                $totalWebsite = $websites->count();
+                $websiteOnline = $websites->where('status', 'Online')->count();
+                $websiteOffline = $websites->where('status', 'Offline')->count();
+            @endphp
 
-                        <th>
-                            INSTANSI
-                        </th>
+            <div class="statistics">
 
-                        <th>
-                            URL
-                        </th>
+                <div class="stat-card">
+                    <div class="stat-title">TOTAL WEBSITE</div>
+                    <div class="stat-number total">
+                        {{ $totalWebsite }}
+                    </div>
+                </div>
 
-                        <th>
-                            STATUS
-                        </th>
+                <div class="stat-card">
+                    <div class="stat-title">🟢 WEBSITE AKTIF</div>
+                    <div class="stat-number online-number">
+                        {{ $websiteOnline }}
+                    </div>
+                </div>
 
-                        <th>
-                            RESPONSE
-                        </th>
+                <div class="stat-card">
+                    <div class="stat-title">🔴 WEBSITE TIDAK AKTIF</div>
+                    <div class="stat-number offline-number">
+                        {{ $websiteOffline }}
+                    </div>
+                </div>
 
-                        <th>
-                            TERAKHIR DICEK
-                        </th>
+            </div>
 
-                        <th>
-                            AKSI
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="websiteTable">
-                    @forelse($websites as $website)
-                    <tr>
-                        <td>
-                            {{ $loop->iteration }}
-                        </td>
-                        <td>
+            <!-- WEBSITE -->
+            <div class="website-container">
 
-                            <div class="website-name">
+                <div class="table-header">
+                    <h2>Daftar Website Kota Metro</h2>
 
-                                {{ $website->nama_website }}
+                    <input
+                        type="text"
+                        id="searchWebsite"
+                        class="search"
+                        placeholder="Cari website atau instansi..."
+                        onkeyup="searchTable()"
+                    >
+                </div>
 
-                            </div>
-                        </td>
-                        <td>
-                            {{ $website->instansi }}
-                        </td>
-                        <td>
-                            <a
-                                href="{{ $website->url }}"
-                                target="_blank"
-                                class="url"
-                            >
+                <div class="table-wrapper">
 
-                                {{ $website->url }}
-                            </a>
-                        </td>
-                        <td>
-                            @if($website->status == 'Online')
+                    <table id="websiteTable">
+                        <thead>
+                            <tr>
+                                <th>NO</th>
+                                <th>NAMA WEBSITE</th>
+                                <th>INSTANSI</th>
+                                <th>URL</th>
+                                <th>STATUS</th>
+                                <th>RESPONSE</th>
+                                <th>TERAKHIR DICEK</th>
+                                <th>AKSI</th>
+                            </tr>
+                        </thead>
 
-                                <span
-                                    class="status status-online"
-                                >
+                        <tbody>
 
-                                    <span
-                                        class="status-dot dot-online"
-                                    ></span>
+                            @forelse($websites as $index => $website)
 
-                                    ONLINE
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
 
-                                </span>
+                                    <td>
+                                        <span class="website-name">
+                                            {{ $website->nama_website }}
+                                        </span>
+                                    </td>
 
-                            @else
+                                    <td>
+                                        {{ $website->instansi }}
+                                    </td>
 
-                                <span
-                                    class="status status-offline"
-                                >
+                                    <td>
+                                        <a
+                                            href="{{ $website->url }}"
+                                            target="_blank"
+                                            class="url"
+                                            title="{{ $website->url }}"
+                                        >
+                                            {{ $website->url }}
+                                        </a>
+                                    </td>
 
-                                    <span
-                                        class="status-dot dot-offline"
-                                    ></span>
+                                    <td>
+                                        @if($website->status === 'Online')
+                                            <span class="status status-online">
+                                                ● ONLINE
+                                            </span>
+                                        @elseif($website->status === 'Offline')
+                                            <span class="status status-offline">
+                                                ● OFFLINE
+                                            </span>
+                                        @elseif($website->status === 'Warning')
+                                            <span class="status status-warning">
+                                                ● WARNING
+                                            </span>
+                                        @else
+                                            <span class="status status-unchecked">
+                                                ● BELUM DICEK
+                                            </span>
+                                        @endif
+                                    </td>
 
-                                    OFFLINE
+                                    <td>
+                                        @if($website->response_time)
+                                            {{ $website->response_time }} ms
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
 
-                                </span>
-                            @endif
-                        </td>
-                        <td>
-                            @if($website->response_time)
+                                    <td>
+                                        @if($website->last_checked_at)
+                                            {{ $website->last_checked_at->format('d/m/Y H:i') }}
+                                        @else
+                                            Belum pernah
+                                        @endif
+                                    </td>
 
-                                {{ $website->response_time }}
-                                ms
+                                    <td>
+                                        <form
+                                            action="{{ route('website.check', $website->id) }}"
+                                            method="POST"
+                                            class="action-form"
+                                        >
+                                            @csrf
 
-                            @else
+                                            <button type="submit" class="btn-action">
+                                                Cek
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
 
-                                -
-                            @endif
-                        </td>
-                        <td>
-                            @if($website->last_checked_at)
+                            @empty
 
-                                {{ $website->last_checked_at
-                                    ->format('d/m/Y H:i') }}
+                                <tr>
+                                    <td colspan="8" style="text-align:center;">
+                                        Belum ada website yang terdaftar.
+                                    </td>
+                                </tr>
 
-                            @else
-                                Belum dicek
-                            @endif
-                        </td>
-                        <td>
-                            <form
-                                action="{{ route(
-                                    'website.check',
-                                    $website->id
-                                ) }}"
-                                method="POST"
-                            >
+                            @endforelse
 
-                                @csrf
+                        </tbody>
+                    </table>
 
-                                <button
-                                    type="submit"
-                                    class="check-btn"
-                                >
-                                    Cek
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td
-                            colspan="8"
-                            class="empty"
-                        >
-                            <br><br>
-                            Belum ada website
-                            yang terdaftar.
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <footer>
+                </div>
+            </div>
 
-        © {{ date('Y') }}
-        Pemerintah Kota Metro
-        |
-        Sistem Monitoring Website
+        </section>
 
-    </footer>
-</main>
-<script>
-    const search =
-        document.getElementById('searchWebsite');
+        <footer>
+            © {{ date('Y') }} Pemerintah Kota Metro |
+            Sistem Monitoring Website
+        </footer>
 
-    search.addEventListener('keyup', function () {
+    </main>
 
-        const keyword =
-            this.value.toLowerCase();
+    <!-- SEARCH -->
+    <script>
+        function searchTable() {
+            const input = document.getElementById('searchWebsite');
+            const filter = input.value.toLowerCase();
+            const rows = document.querySelectorAll('#websiteTable tbody tr');
 
-        const rows =
-            document.querySelectorAll(
-                '#websiteTable tr'
-            );
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        }
+    </script>
 
-        rows.forEach(function (row) {
-            const text =
-                row.innerText.toLowerCase();
-            if (text.includes(keyword)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
-
-</script>
 </body>
 </html>

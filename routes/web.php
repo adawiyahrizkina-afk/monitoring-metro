@@ -9,31 +9,15 @@ use App\Http\Controllers\MonitoringController;
 
 /*
 |--------------------------------------------------------------------------
-| HALAMAN UTAMA
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/', function () {
-    return redirect()->route('login');
-});
-
-
-/*
-|--------------------------------------------------------------------------
 | LOGIN
 |--------------------------------------------------------------------------
 */
 
-Route::get(
-    '/admin/login',
-    [AdminController::class, 'login']
-)->name('login');
+Route::get('/admin/login', [AdminController::class, 'login'])
+    ->name('login');
 
-
-Route::post(
-    '/admin/login',
-    [AdminController::class, 'authenticate']
-)->name('login.process');
+Route::post('/admin/login', [AdminController::class, 'authenticate'])
+    ->name('login.process');
 
 
 /*
@@ -44,26 +28,64 @@ Route::post(
 
 Route::middleware('auth')->group(function () {
 
-    Route::get(
-        '/admin/dashboard',
-        [WebsiteController::class, 'dashboard']
-    )->name('dashboard');
+    // DASHBOARD
+    Route::get('/admin/dashboard', [WebsiteController::class, 'dashboard'])
+        ->name('dashboard');
 
 
-    Route::post(
-        '/admin/logout',
-        [AdminController::class, 'logout']
-    )->name('logout');
+    // DAFTAR WEBSITE
+    Route::get('/admin/website', [WebsiteController::class, 'index'])
+        ->name('website.index');
 
 
-    Route::post(
-        '/admin/website/{website}/check',
-        [MonitoringController::class, 'check']
-    )->name('website.check');
+    // TAMBAH WEBSITE
+    Route::get('/admin/website/create', [WebsiteController::class, 'create'])
+        ->name('website.create');
 
-    Route::post(
-          '/admin/websites/check-all',
-         [MonitoringController::class, 'checkAll']
-    )->name('website.check.all');
+
+    // SIMPAN WEBSITE
+    Route::post('/admin/website', [WebsiteController::class, 'store'])
+        ->name('website.store');
+
+
+    // CEK SATU WEBSITE
+    Route::post('/admin/website/{website}/check', [MonitoringController::class, 'check'])
+        ->name('website.check');
+
+
+    // CEK SEMUA WEBSITE
+    Route::post('/admin/websites/check-all', [MonitoringController::class, 'checkAll'])
+        ->name('website.check.all');
+
+
+    // RIWAYAT
+   Route::get('/admin/riwayat', function () {
+    $logs = \App\Models\MonitoringLog::with('website')
+        ->latest('checked_at')
+        ->get();
+    return view('riwayat.index', compact('logs'));
+})->name('riwayat.index');
+
+
+    // MONITORING
+    Route::get('/admin/monitoring', function () {
+        return view('monitoring.index');
+    })->name('monitoring.index');
+
+
+    // PENGATURAN
+    Route::get('/admin/pengaturan', function () {
+        return view('pengaturan.index');
+    })->name('pengaturan.index');
+
+
+    // HAPUS WEBSITE
+    Route::delete('/admin/website/{website}', [WebsiteController::class, 'destroy'])
+        ->name('website.destroy');
+
+
+    // LOGOUT
+    Route::post('/admin/logout', [AdminController::class, 'logout'])
+        ->name('logout');
 
 });

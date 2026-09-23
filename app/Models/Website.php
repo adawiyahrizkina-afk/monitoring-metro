@@ -23,6 +23,8 @@ class Website extends Model
 
     public function monitoringLogs()
     {
-        return $this->hasMany(MonitoringLog::class);
+        return $this->hasMany(
+            MonitoringLog::class
+        );
     }
 }
