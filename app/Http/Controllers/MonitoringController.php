@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Website;
 use App\Models\MonitoringLog;
+use App\Services\MonitoringLogCleanup;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -14,6 +15,7 @@ class MonitoringController extends Controller
      */
     public function check(Website $website)
     {
+        app(MonitoringLogCleanup::class)->handle();
         $this->checkWebsite($website);
 
         return redirect()
@@ -29,6 +31,7 @@ class MonitoringController extends Controller
      */
     public function checkAll()
     {
+        app(MonitoringLogCleanup::class)->handle();
         $websites = Website::where('monitoring_aktif', true)->get();
 
         if ($websites->isEmpty()) {
@@ -109,7 +112,6 @@ class MonitoringController extends Controller
                 $keterangan =
                     'Website dapat diakses dengan normal. ' .
                     'HTTP ' . $httpStatus . '.';
-
             }
 
             /*
@@ -117,8 +119,7 @@ class MonitoringController extends Controller
              *
              * Website masih bisa diakses,
              * tetapi response lebih dari 1000 ms.
-             */
-            elseif (
+             */ elseif (
                 $httpStatus >= 200 &&
                 $httpStatus < 400 &&
                 $responseTime > 1000
@@ -129,22 +130,19 @@ class MonitoringController extends Controller
                 $keterangan =
                     'Website dapat diakses tetapi respons lambat. ' .
                     'HTTP ' . $httpStatus . '.';
-
             }
 
             /*
              * STATUS OFFLINE
              *
              * HTTP 400 atau lebih.
-             */
-            else {
+             */ else {
 
                 $status = 'Offline';
                 $keterangan =
                     'Website memberikan HTTP status ' .
                     $httpStatus . '.';
             }
-
         } catch (\Throwable $e) {
 
             /*

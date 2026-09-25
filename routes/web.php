@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\MonitoringController;
+use App\Http\Controllers\SettingsController;
+use App\Services\MonitoringLogCleanup;
 
 
 /*
@@ -59,24 +61,26 @@ Route::middleware('auth')->group(function () {
 
 
     // RIWAYAT
-   Route::get('/admin/riwayat', function () {
-    $logs = \App\Models\MonitoringLog::with('website')
-        ->latest('checked_at')
-        ->get();
-    return view('dashboard.admin.riwayat.index', compact('logs'));
-})->name('riwayat.index');
+    Route::get('/admin/riwayat', function () {
+        app(MonitoringLogCleanup::class)->handle();
+        $logs = \App\Models\MonitoringLog::with('website')
+            ->latest('checked_at')
+            ->get();
+        return view('dashboard.admin.riwayat.index', compact('logs'));
+    })->name('riwayat.index');
 
 
     // MONITORING
-    Route::get('/admin/monitoring', function () {
-        return view('dashboard.admin.monitoring.index');
-    })->name('monitoring.index');
+    Route::get('/admin/monitoring', [WebsiteController::class, 'monitoring'])
+        ->name('monitoring.index');
 
 
     // PENGATURAN
-    Route::get('/admin/pengaturan', function () {
-        return view('dashboard.admin.pengaturan.index');
-    })->name('pengaturan.index');
+    Route::get('/admin/pengaturan', [SettingsController::class, 'index'])
+        ->name('pengaturan.index');
+
+    Route::post('/admin/pengaturan', [SettingsController::class, 'update'])
+        ->name('pengaturan.update');
 
 
     // HAPUS WEBSITE
@@ -87,5 +91,4 @@ Route::middleware('auth')->group(function () {
     // LOGOUT
     Route::post('/admin/logout', [AdminController::class, 'logout'])
         ->name('logout');
-
 });

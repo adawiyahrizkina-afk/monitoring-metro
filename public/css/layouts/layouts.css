@@ -1,6 +1,6 @@
 :root {
     --biru: #0d1282;
-    --biru-light: #647FBC;
+    --biru-light: #647fbc;
     --putih: #eeeded;
     --kuning: #f0de36;
     --merah: #d71313;
@@ -185,6 +185,12 @@ body {
     background: #0d7555;
 }
 
+.btn-check-all:disabled {
+    background: #7aa99a;
+    cursor: wait;
+    opacity: 0.8;
+}
+
 .btn-add {
     border: 1px solid #ccd7d3;
     background: white;
@@ -238,6 +244,18 @@ body {
 
 .offline-number {
     color: #df2929;
+}
+
+.warning-number {
+    color: #a66a00;
+}
+
+.unchecked-number {
+    color: #65736e;
+}
+
+.active-number {
+    color: #168c68;
 }
 
 /* TABLE */

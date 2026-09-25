@@ -61,53 +61,65 @@
 
             @forelse($websites ?? [] as $website)
 
-                <tr>
+            <tr>
 
-                    <td>
-                        {{ $loop->iteration }}
-                    </td>
+                <td>
+                    {{ $loop->iteration }}
+                </td>
 
-                    <td>
-                        {{ $website->nama_website ?? '-' }}
-                    </td>
+                <td>
+                    {{ $website->nama_website ?? '-' }}
+                </td>
 
-                    <td>
-                        {{ $website->url ?? '-' }}
-                    </td>
+                <td>
+                    {{ $website->url ?? '-' }}
+                </td>
 
-                    <td>
+                <td>
 
-                        @if(($website->status ?? '') == 'ONLINE')
+                    @if(($website->status ?? '') == 'Online')
 
-                            <span class="status-online">
-                                ● ONLINE
-                            </span>
+                    <span class="status-online">
+                        ● ONLINE
+                    </span>
 
-                        @else
+                    @elseif(($website->status ?? '') == 'Warning')
 
-                            <span class="status-offline">
-                                ● OFFLINE
-                            </span>
+                    <span class="status-warning">
+                        ● WARNING
+                    </span>
 
-                        @endif
+                    @elseif(($website->status ?? '') == 'Offline')
 
-                    </td>
+                    <span class="status-offline">
+                        ● OFFLINE
+                    </span>
 
-                    <td>
-                        {{ $website->response_time ?? '-' }}
-                    </td>
+                    @else
 
-                </tr>
+                    <span class="status-unchecked">
+                        ● BELUM DICEK
+                    </span>
+
+                    @endif
+
+                </td>
+
+                <td>
+                    {{ $website->response_time ? $website->response_time . ' ms' : '-' }}
+                </td>
+
+            </tr>
 
             @empty
 
-                <tr>
+            <tr>
 
-                    <td colspan="5" style="text-align:center;">
-                        Belum ada hasil monitoring.
-                    </td>
+                <td colspan="5" style="text-align:center;">
+                    Belum ada hasil monitoring.
+                </td>
 
-                </tr>
+            </tr>
 
             @endforelse
 

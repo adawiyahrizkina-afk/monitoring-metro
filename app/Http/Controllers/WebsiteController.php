@@ -13,20 +13,33 @@ class WebsiteController extends Controller
         $total = $websites->count();
         $online = $websites->where('status', 'Online')->count();
         $offline = $websites->where('status', 'Offline')->count();
+        $warning = $websites->where('status', 'Warning')->count();
+        $unchecked = $websites->where('status', 'Belum Dicek')->count();
+        $monitoringActive = $websites->where('monitoring_aktif', true)->count();
 
         return view('dashboard.admin.index', compact(
             'websites',
             'total',
             'online',
-            'offline'
+            'offline',
+            'warning',
+            'unchecked',
+            'monitoringActive'
         ));
     }
 
-public function index()
-{
-    $websites = Website::latest()->get();
-    return view('dashboard.admin.website.index', compact('websites'));
-}
+    public function monitoring()
+    {
+        $websites = Website::latest()->get();
+
+        return view('dashboard.admin.monitoring.index', compact('websites'));
+    }
+
+    public function index()
+    {
+        $websites = Website::latest()->get();
+        return view('dashboard.admin.website.index', compact('websites'));
+    }
 
     public function create()
     {
@@ -52,6 +65,5 @@ public function index()
         return redirect()
             ->route('dashboard')
             ->with('success', 'Website berhasil ditambahkan.');
-
     }
 }

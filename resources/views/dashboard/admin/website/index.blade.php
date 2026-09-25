@@ -40,55 +40,61 @@
 
             @forelse($websites ?? [] as $website)
 
-                <tr>
+            <tr>
 
-                    <td>
-                        {{ $loop->iteration }}
-                    </td>
+                <td>
+                    {{ $loop->iteration }}
+                </td>
 
-                    <td>
-                        {{ $website->nama_website ?? '-' }}
-                    </td>
+                <td>
+                    {{ $website->nama_website ?? '-' }}
+                </td>
 
-                    <td>
-                        {{ $website->url ?? '-' }}
-                    </td>
+                <td>
+                    {{ $website->url ?? '-' }}
+                </td>
 
-                    <td>
+                <td>
 
-                        @if(($website->status ?? '') == 'ONLINE')
+                    @if(($website->status ?? '') == 'Online')
 
-                            <span class="status-online">
-                                ● ONLINE
-                            </span>
+                    <span class="status-online">
+                        ● ONLINE
+                    </span>
 
-                        @elseif(($website->status ?? '') == 'OFFLINE')
+                    @elseif(($website->status ?? '') == 'Offline')
 
-                            <span class="status-offline">
-                                ● OFFLINE
-                            </span>
+                    <span class="status-offline">
+                        ● OFFLINE
+                    </span>
 
-                        @else
+                    @elseif(($website->status ?? '') == 'Warning')
 
-                            <span class="status-online">
-                                BELUM DICEK
-                            </span>
+                    <span class="status-warning">
+                        ● WARNING
+                    </span>
 
-                        @endif
+                    @else
 
-                    </td>
+                    <span class="status-unchecked">
+                        BELUM DICEK
+                    </span>
 
-                </tr>
+                    @endif
+
+                </td>
+
+            </tr>
 
             @empty
 
-                <tr>
+            <tr>
 
-                    <td colspan="4" style="text-align:center;">
-                        Belum ada website yang terdaftar.
-                    </td>
+                <td colspan="4" style="text-align:center;">
+                    Belum ada website yang terdaftar.
+                </td>
 
-                </tr>
+            </tr>
 
             @endforelse
 
