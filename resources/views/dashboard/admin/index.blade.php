@@ -1,456 +1,219 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.admin')
 
-<head>
+@section('title', 'Dashboard Monitoring Website Kota Metro')
 
-    <meta charset="UTF-8">
+@section('content')
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-left">Sistem Monitoring Website</div>
 
-    <title>Monitoring Website Kota Metro</title>
-    <link rel="stylesheet" href="/css/index.css">
-</head>
-
-
-<body>
-
-
-    <!-- ================= SIDEBAR ================= -->
-
-    <aside class="sidebar">
-        <h1 style="display: flex; align-items: center; gap: 10px;">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/LOGO_KOTA_METRO.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=original" alt="logo" width="50" style="object-fit: cover;">
-            judul
-        </h1>
-        <div class="logo">
-
-            <div class="logo-icon">
+        <div class="topbar-right">
+            <div class="monitoring-active">
+                <span></span>Monitoring Aktif
             </div>
 
-            <h2>
-                PEMERINTAH KOTA
-                <br>
-                METRO
-            </h2>
-
-            <p>
-                Monitoring Website Kota Metro
-            </p>
-
+            <div class="admin-name">
+                {{ Auth::user()->name }}
+            </div>
         </div>
+    </header>
 
+    <!-- CONTENT -->
+    <section class="content">
 
-        <div class="menu-title">
-            MENU UTAMA
-        </div>
-
-
-        <a
-            href="{{ route('dashboard') }}"
-            class="menu active">
-            &nbsp; Dashboard
-        </a>
-
-
-        <a
-            href="#daftar-website"
-            class="menu">
-            &nbsp; Daftar Website
-        </a>
-
-
-        <a
-            href="#daftar-website"
-            class="menu">
-            &nbsp; Monitoring
-        </a>
-
-
-        <a
-            href="#"
-            class="menu">
-            &nbsp; Riwayat Monitoring
-        </a>
-
-
-        <div class="menu-title">
-            SISTEM
-        </div>
-
-
-        <a
-            href="#"
-            class="menu">
-            &nbsp; Pengaturan
-        </a>
-
-
-        <div class="sidebar-bottom">
-
-            <form
-                action="{{ route('logout') }}"
-                method="POST">
-
-                @csrf
-
-                <button
-                    type="submit"
-                    class="menu"
-                    style="
-                    width:100%;
-                    text-align:left;
-                    background-color: var(--merah);
-                    color: var(--kuning);
-                ">
-
-                    &nbsp; Logout
-
-                </button>
-
-            </form>
-
-        </div>
-
-    </aside>
-
-
-    <!-- ================= MAIN ================= -->
-
-    <main class="main">
-
-
-        <!-- TOPBAR -->
-
-        <div class="topbar">
-
-            <div class="topbar-left">
-
-                Sistem Monitoring Website
-
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>Dashboard Monitoring</h1>
+                <p>Pantau kondisi website dan aplikasi Pemerintah Kota Metro.</p>
             </div>
 
+            <div class="header-buttons">
 
-            <div class="topbar-right">
+                <form action="{{ route('website.check.all') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-check-all">
+                        ✓ Cek Semua Website
+                    </button>
+                </form>
 
-                <div class="monitoring-active">
+                <a href="{{ route('website.create') }}" class="btn btn-add">
+                    ＋ Tambah Website
+                </a>
 
-                    <span class="green-dot"></span>
+            </div>
+        </div>
 
-                    Monitoring Aktif
+        <!-- ALERT -->
+        @if(session('success'))
+        <div class="alert">
+            ✓ {{ session('success') }}
+        </div>
+        @endif
 
+        <!-- STATISTICS -->
+        @php
+        $totalWebsite = $websites->count();
+        $websiteOnline = $websites->where('status', 'Online')->count();
+        $websiteOffline = $websites->where('status', 'Offline')->count();
+        @endphp
+
+        <div class="statistics">
+
+            <div class="stat-card">
+                <div class="stat-title">TOTAL WEBSITE</div>
+                <div class="stat-number total">
+                    {{ $totalWebsite }}
                 </div>
+            </div>
 
-                <div class="admin">
-
-                    {{ Auth::user()->name }}
-
+            <div class="stat-card">
+                <div class="stat-title">🟢 WEBSITE AKTIF</div>
+                <div class="stat-number online-number">
+                    {{ $websiteOnline }}
                 </div>
+            </div>
 
+            <div class="stat-card">
+                <div class="stat-title">🔴 WEBSITE TIDAK AKTIF</div>
+                <div class="stat-number offline-number">
+                    {{ $websiteOffline }}
+                </div>
             </div>
 
         </div>
 
+        <!-- WEBSITE -->
+        <div class="website-container">
 
-        <!-- CONTENT -->
+            <div class="table-header">
+                <h2>Daftar Website Kota Metro</h2>
 
-        <div class="content">
-
-
-            <!-- HEADING -->
-
-            <div class="heading">
-
-                <div>
-
-                    <h1>
-                        Dashboard Monitoring
-                    </h1>
-
-                    <p>
-                        Pantau kondisi website dan aplikasi
-                        Pemerintah Kota Metro.
-                    </p>
-
-                </div>
-
-
-                <div class="heading-actions">
-
-                    <form
-                        action="{{ route('website.check.all') }}"
-                        method="POST">
-
-                        @csrf
-
-                        <button
-                            type="submit"
-                            class="btn btn-green">
-                            Cek Semua Website
-                        </button>
-
-                    </form>
-
-                    <a
-                        href="#"
-                        class="btn btn-white">
-                        Tambah Website
-                    </a>
-
-                </div>
-
+                <input
+                    type="text"
+                    id="searchWebsite"
+                    class="search"
+                    placeholder="Cari website atau instansi..."
+                    onkeyup="searchTable()">
             </div>
 
+            <div class="table-wrapper">
 
-            <!-- ALERT -->
-            @if(session('success'))
-            <div class="alert">
-                ✅ {{ session('success') }}
-            </div>
-            @endif
-
-            <!-- STATISTIK -->
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-top">
-                        <div class="stat-title">
-                            TOTAL WEBSITE
-                        </div>
-
-                        <div class="stat-icon icon-total">
-                        </div>
-
-                    </div>
-                    <div class="stat-number">
-                        {{ $total }}
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-top">
-                        <div class="stat-title">
-                            WEBSITE AKTIF
-                        </div>
-
-                        <div class="stat-icon icon-online">
-                            ✓
-                        </div>
-                    </div>
-                    <div class="stat-number number-online">
-                        {{ $online }}
-                    </div>
-                </div>
-                <div class="stat-card">
-
-                    <div class="stat-top">
-
-                        <div class="stat-title">
-                            WEBSITE TIDAK AKTIF
-                        </div>
-
-                        <div class="stat-icon icon-offline">
-                            ✕
-                        </div>
-                    </div>
-                    <div class="stat-number number-offline">
-                        {{ $offline }}
-                    </div>
-                </div>
-            </div>
-            <!-- WEBSITE -->
-            <div
-                class="website-box"
-                id="daftar-website">
-                <div class="table-header">
-                    <div>
-
-                        <h2>
-                            Daftar Website Kota Metro
-                        </h2>
-
-                    </div>
-
-                    <input
-                        type="text"
-                        id="searchWebsite"
-                        class="search"
-                        placeholder="Cari website atau instansi...">
-                </div>
-                <table>
+                <table id="websiteTable">
                     <thead>
                         <tr>
-
-                            <th>
-                                NO
-                            </th>
-
-                            <th>
-                                NAMA WEBSITE
-                            </th>
-
-                            <th>
-                                INSTANSI
-                            </th>
-
-                            <th>
-                                URL
-                            </th>
-
-                            <th>
-                                STATUS
-                            </th>
-
-                            <th>
-                                RESPONSE
-                            </th>
-
-                            <th>
-                                TERAKHIR DICEK
-                            </th>
-
-                            <th>
-                                AKSI
-                            </th>
+                            <th>NO</th>
+                            <th>NAMA WEBSITE</th>
+                            <th>INSTANSI</th>
+                            <th>URL</th>
+                            <th>STATUS</th>
+                            <th>RESPONSE</th>
+                            <th>TERAKHIR DICEK</th>
+                            <th>AKSI</th>
                         </tr>
                     </thead>
-                    <tbody id="websiteTable">
-                        @forelse($websites as $website)
+
+                    <tbody>
+
+                        @forelse($websites as $index => $website)
+
                         <tr>
-                            <td>
-                                {{ $loop->iteration }}
-                            </td>
-                            <td>
+                            <td>{{ $index + 1 }}</td>
 
-                                <div class="website-name">
-
+                            <td>
+                                <span class="website-name">
                                     {{ $website->nama_website }}
-
-                                </div>
+                                </span>
                             </td>
+
                             <td>
                                 {{ $website->instansi }}
                             </td>
+
                             <td>
                                 <a
                                     href="{{ $website->url }}"
                                     target="_blank"
-                                    class="url">
-
+                                    class="url"
+                                    title="{{ $website->url }}">
                                     {{ $website->url }}
                                 </a>
                             </td>
+
                             <td>
-                                @if($website->status == 'Online')
-
-                                <span
-                                    class="status status-online">
-
-                                    <span
-                                        class="status-dot dot-online"></span>
-
-                                    ONLINE
-
+                                @if($website->status === 'Online')
+                                <span class="status status-online">
+                                    ● ONLINE
                                 </span>
-
+                                @elseif($website->status === 'Offline')
+                                <span class="status status-offline">
+                                    ● OFFLINE
+                                </span>
+                                @elseif($website->status === 'Warning')
+                                <span class="status status-warning">
+                                    ● WARNING
+                                </span>
                                 @else
-
-                                <span
-                                    class="status status-offline">
-
-                                    <span
-                                        class="status-dot dot-offline"></span>
-
-                                    OFFLINE
-
+                                <span class="status status-unchecked">
+                                    ● BELUM DICEK
                                 </span>
                                 @endif
                             </td>
+
                             <td>
                                 @if($website->response_time)
-
-                                {{ $website->response_time }}
-                                ms
-
+                                {{ $website->response_time }} ms
                                 @else
-
                                 -
                                 @endif
                             </td>
+
                             <td>
                                 @if($website->last_checked_at)
-
-                                {{ $website->last_checked_at
-                                    ->format('d/m/Y H:i') }}
-
+                                {{ $website->last_checked_at->format('d/m/Y H:i') }}
                                 @else
-                                Belum dicek
+                                Belum pernah
                                 @endif
                             </td>
+
                             <td>
                                 <form
-                                    action="{{ route(
-                                    'website.check',
-                                    $website->id
-                                ) }}"
-                                    method="POST">
-
+                                    action="{{ route('website.check', $website->id) }}"
+                                    method="POST"
+                                    class="action-form">
                                     @csrf
 
-                                    <button
-                                        type="submit"
-                                        class="check-btn">
+                                    <button type="submit" class="btn-action">
                                         Cek
                                     </button>
                                 </form>
                             </td>
                         </tr>
+
                         @empty
+
                         <tr>
-                            <td
-                                colspan="8"
-                                class="empty">
-                                <br><br>
-                                Belum ada website
-                                yang terdaftar.
+                            <td colspan="8" style="text-align:center;">
+                                Belum ada website yang terdaftar.
                             </td>
                         </tr>
+
                         @endforelse
+
                     </tbody>
                 </table>
+
             </div>
         </div>
-        <footer>
 
-            © {{ date('Y') }}
-            Pemerintah Kota Metro
-            |
-            Sistem Monitoring Website
+    </section>
 
-        </footer>
-    </main>
-    <script>
-        const search =
-            document.getElementById('searchWebsite');
+    <footer>
+        © {{ date('Y') }} Pemerintah Kota Metro |
+        Sistem Monitoring Website
+    </footer>
 
-        search.addEventListener('keyup', function() {
-
-            const keyword =
-                this.value.toLowerCase();
-
-            const rows =
-                document.querySelectorAll(
-                    '#websiteTable tr'
-                );
-
-            rows.forEach(function(row) {
-                const text =
-                    row.innerText.toLowerCase();
-                if (text.includes(keyword)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    </script>
-</body>
-
-</html>
+<!-- SEARCH -->
+<script src="/js/admin.js"></script>
+@endsection

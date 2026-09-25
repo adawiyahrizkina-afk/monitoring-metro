@@ -14,7 +14,7 @@ class WebsiteController extends Controller
         $online = $websites->where('status', 'Online')->count();
         $offline = $websites->where('status', 'Offline')->count();
 
-        return view('dashboard.index', compact(
+        return view('dashboard.admin.index', compact(
             'websites',
             'total',
             'online',
@@ -25,12 +25,12 @@ class WebsiteController extends Controller
 public function index()
 {
     $websites = Website::latest()->get();
-    return view('website.index', compact('websites'));
+    return view('dashboard.admin.website.index', compact('websites'));
 }
 
     public function create()
     {
-        return view('website.create');
+        return view('dashboard.admin.website.create');
     }
 
     public function store(Request $request)
@@ -53,17 +53,5 @@ public function index()
             ->route('dashboard')
             ->with('success', 'Website berhasil ditambahkan.');
 
-<<<<<<< HEAD
-=======
-        return view(
-            'dashboard.admin.index',
-            compact(
-                'total',
-                'online',
-                'offline',
-                'websites'
-            )
-        );
->>>>>>> 040da206f75aafbb01274d7dfc18f6b97c3d4e31
     }
 }

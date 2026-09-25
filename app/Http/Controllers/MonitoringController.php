@@ -110,7 +110,6 @@ class MonitoringController extends Controller
                     'Website dapat diakses dengan normal. ' .
                     'HTTP ' . $httpStatus . '.';
 
-<<<<<<< HEAD
             }
 
             /*
@@ -140,16 +139,12 @@ class MonitoringController extends Controller
              */
             else {
 
-=======
-            } else {
->>>>>>> 040da206f75aafbb01274d7dfc18f6b97c3d4e31
                 $status = 'Offline';
                 $keterangan =
                     'Website memberikan HTTP status ' .
                     $httpStatus . '.';
             }
 
-<<<<<<< HEAD
         } catch (\Throwable $e) {
 
             /*
@@ -163,11 +158,6 @@ class MonitoringController extends Controller
 
             $status = 'Offline';
 
-=======
-        } catch (\Exception $e) {
-            $status = 'Offline';
-            $responseTime = null;
->>>>>>> 040da206f75aafbb01274d7dfc18f6b97c3d4e31
             $keterangan =
                 'Website tidak dapat diakses. ' .
                 'Koneksi gagal atau timeout.';

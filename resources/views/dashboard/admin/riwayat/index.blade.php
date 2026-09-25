@@ -1,3 +1,9 @@
+@extends('layouts.admin')
+
+@section('title', 'Monitoring Website')
+
+@section('content')
+
 <h1>Riwayat Monitoring</h1>
 <p>Riwayat hasil pemeriksaan website Kota Metro.</p>
 <div class="card">
@@ -48,3 +54,5 @@
         </tbody>
     </table>
 </div>
+
+@endsection

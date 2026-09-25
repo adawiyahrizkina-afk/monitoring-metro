@@ -13,7 +13,7 @@ use App\Http\Controllers\MonitoringController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/admin/login', [AdminController::class, 'login'])
+Route::get('/', [AdminController::class, 'login'])
     ->name('login');
 
 Route::post('/admin/login', [AdminController::class, 'authenticate'])
@@ -63,19 +63,19 @@ Route::middleware('auth')->group(function () {
     $logs = \App\Models\MonitoringLog::with('website')
         ->latest('checked_at')
         ->get();
-    return view('riwayat.index', compact('logs'));
+    return view('dashboard.admin.riwayat.index', compact('logs'));
 })->name('riwayat.index');
 
 
     // MONITORING
     Route::get('/admin/monitoring', function () {
-        return view('monitoring.index');
+        return view('dashboard.admin.monitoring.index');
     })->name('monitoring.index');
 
 
     // PENGATURAN
     Route::get('/admin/pengaturan', function () {
-        return view('pengaturan.index');
+        return view('dashboard.admin.pengaturan.index');
     })->name('pengaturan.index');
 
 
