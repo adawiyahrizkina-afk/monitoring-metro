@@ -9,7 +9,11 @@
 <div class="card">
     <div style="display: flex; align-items: center; max-width: 100%;">
         <h2 style="margin-top: none; width: 100%;">Riwayat Pemeriksaan Website</h2>
-        <button class="delete" style="float: right;">hapus semua log</button>
+        <form action="{{ route('riwayat.destroy') }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus semua log ?');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="delete">Hapus semua log</button>
+        </form>
     </div>
     <table>
         <thead>

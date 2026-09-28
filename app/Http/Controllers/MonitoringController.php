@@ -71,6 +71,20 @@ class MonitoringController extends Controller
         ]);
     }
 
+    public function destroyAllLogs()
+    {
+        $deletedCount = MonitoringLog::query()->delete();
+
+        return redirect()
+            ->route('riwayat.index')
+            ->with(
+                'success',
+                $deletedCount > 0
+                    ? "Berhasil menghapus {$deletedCount} log monitoring."
+                    : 'Tidak ada log monitoring untuk dihapus.'
+            );
+    }
+
     private function checkAllWebsites()
     {
         app(MonitoringLogCleanup::class)->handle();
