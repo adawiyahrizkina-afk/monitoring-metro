@@ -132,7 +132,7 @@
                         <th>INSTANSI</th>
                         <th>URL</th>
                         <th>STATUS</th>
-                        <th>RESPONSE</th>
+                        <th>RESPONS (DETIK)</th>
                         <th>TERAKHIR DICEK</th>
                         <th>AKSI</th>
                     </tr>
@@ -186,8 +186,8 @@
                         </td>
 
                         <td>
-                            @if($website->response_time)
-                            {{ $website->response_time }} ms
+                            @if($website->response_time !== null)
+                            {{ number_format($website->response_time / 1000, 2, ',', '.') }} detik
                             @else
                             -
                             @endif
@@ -239,5 +239,5 @@
 </footer>
 
 <!-- SEARCH -->
-<script src="/js/admin.js"></script>
+<script src="/js/search.js"></script>
 @endsection

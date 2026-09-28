@@ -46,6 +46,11 @@ class WebsiteController extends Controller
         return view('dashboard.admin.website.create');
     }
 
+    public function edit(Website $website)
+    {
+        return view('dashboard.admin.website.edit', compact('website'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -65,5 +70,29 @@ class WebsiteController extends Controller
         return redirect()
             ->route('dashboard')
             ->with('success', 'Website berhasil ditambahkan.');
+    }
+
+    public function update(Request $request, Website $website)
+    {
+        $validated = $request->validate([
+            'nama_website' => 'required|string|max:100',
+            'instansi' => 'required|string|max:100',
+            'url' => 'required|url|max:255',
+        ]);
+
+        $website->update($validated);
+
+        return redirect()
+            ->route('website.index')
+            ->with('success', 'Website berhasil diperbarui.');
+    }
+
+    public function destroy(Website $website)
+    {
+        $website->delete();
+
+        return redirect()
+            ->route('website.index')
+            ->with('success', 'Website berhasil dihapus.');
     }
 }

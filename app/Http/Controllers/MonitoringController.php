@@ -7,6 +7,7 @@ use App\Models\MonitoringLog;
 use App\Services\MonitoringLogCleanup;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
 
 class MonitoringController extends Controller
 {
@@ -31,8 +32,7 @@ class MonitoringController extends Controller
      */
     public function checkAll()
     {
-        app(MonitoringLogCleanup::class)->handle();
-        $websites = Website::where('monitoring_aktif', true)->get();
+        $websites = $this->checkAllWebsites();
 
         if ($websites->isEmpty()) {
             return redirect()
@@ -43,16 +43,53 @@ class MonitoringController extends Controller
                 );
         }
 
-        foreach ($websites as $website) {
-            $this->checkWebsite($website);
-        }
-
         return redirect()
             ->route('dashboard')
             ->with(
                 'success',
                 'Semua website berhasil diperiksa.'
             );
+    }
+
+    public function checkAllRealtime(): JsonResponse
+    {
+        $websites = $this->checkAllWebsites();
+
+        return response()->json([
+            'websites' => $websites->map(function (Website $website) {
+                return [
+                    'id' => $website->id,
+                    'nama_website' => $website->nama_website,
+                    'url' => $website->url,
+                    'status' => $website->status,
+                    'response_time' => $website->response_time,
+                    'last_checked_at' => $website->last_checked_at?->format('d/m/Y H:i:s'),
+                    'score' => $this->performanceScore($website->response_time, $website->status),
+                ];
+            })->values(),
+            'checked_at' => now()->format('d/m/Y H:i:s'),
+        ]);
+    }
+
+    private function checkAllWebsites()
+    {
+        app(MonitoringLogCleanup::class)->handle();
+        $websites = Website::where('monitoring_aktif', true)->get();
+
+        foreach ($websites as $website) {
+            $this->checkWebsite($website);
+        }
+
+        return $websites->fresh();
+    }
+
+    private function performanceScore(?int $responseTime, string $status): int
+    {
+        if ($status === 'Offline' || $responseTime === null) {
+            return 0;
+        }
+
+        return max(0, min(100, (int) round(100 - ($responseTime / 50))));
     }
 
     /**

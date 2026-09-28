@@ -44,6 +44,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/website/create', [WebsiteController::class, 'create'])
         ->name('website.create');
 
+    // EDIT WEBSITE
+    Route::get('/admin/website/{website}/edit', [WebsiteController::class, 'edit'])
+        ->name('website.edit');
+
+    Route::put('/admin/website/{website}', [WebsiteController::class, 'update'])
+        ->name('website.update');
+
 
     // SIMPAN WEBSITE
     Route::post('/admin/website', [WebsiteController::class, 'store'])
@@ -58,6 +65,9 @@ Route::middleware('auth')->group(function () {
     // CEK SEMUA WEBSITE
     Route::post('/admin/websites/check-all', [MonitoringController::class, 'checkAll'])
         ->name('website.check.all');
+
+    Route::post('/admin/monitoring/realtime', [MonitoringController::class, 'checkAllRealtime'])
+        ->name('monitoring.realtime');
 
 
     // RIWAYAT

@@ -21,8 +21,14 @@
         + Tambah Website
     </a>
 
+    <input
+        type="text"
+        id="searchWebsite"
+        class="search"
+        placeholder="Cari website atau instansi..."
+        onkeyup="searchTable()">
 
-    <table>
+    <table id="websiteTable">
 
         <thead>
 
@@ -31,6 +37,7 @@
                 <th>Nama Website</th>
                 <th>URL</th>
                 <th>Status</th>
+                <th style="text-align: center;">Interaksi</th>
             </tr>
 
         </thead>
@@ -51,7 +58,13 @@
                 </td>
 
                 <td>
-                    {{ $website->url ?? '-' }}
+                    <a
+                        href="{{ $website->url }}"
+                        target="_blank"
+                        class="url"
+                        title="{{ $website->url }}">
+                        {{ $website->url }}
+                    </a>
                 </td>
 
                 <td>
@@ -70,7 +83,7 @@
 
                     @elseif(($website->status ?? '') == 'Warning')
 
-                    <span class="status-warning">
+                    <span class="status status-warning">
                         ● WARNING
                     </span>
 
@@ -84,13 +97,32 @@
 
                 </td>
 
+                <td class="button">
+                    <a href="{{ route('website.edit', $website) }}"><button class="edit">Edit</button></a>
+                    <form action="{{ route('website.destroy', $website) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus website ini? Riwayat monitoringnya juga akan terhapus.');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="delete">Hapus</button>
+                    </form>
+                    <form
+                        action="{{ route('website.check', $website->id) }}"
+                        method="POST"
+                        class="action-form">
+                        @csrf
+
+                        <button type="submit" class="btn-action">
+                            Cek
+                        </button>
+                    </form>
+                </td>
+
             </tr>
 
             @empty
 
             <tr>
 
-                <td colspan="4" style="text-align:center;">
+                <td colspan="5" style="text-align:center;">
                     Belum ada website yang terdaftar.
                 </td>
 
@@ -103,5 +135,7 @@
     </table>
 
 </div>
+
+<script src="/js/search.js"></script>
 
 @endsection

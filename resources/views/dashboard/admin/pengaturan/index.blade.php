@@ -42,6 +42,7 @@
             <option value="7" @selected($retentionDays===7)>1 minggu</option>
             <option value="30" @selected($retentionDays===30)>1 bulan</option>
             <option value="365" @selected($retentionDays===365)>1 tahun</option>
+            <option value="365" @selected($retentionDays===365)>Tidak pernah</option>
         </select>
 
         <button type="submit" class="btn btn-check-all">
