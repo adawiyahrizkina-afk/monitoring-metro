@@ -65,7 +65,7 @@ body {
     text-transform: uppercase;
     display: flex;
     align-items: center;
-    gap: 5;
+    gap: 7px;
 }
 
 .menu a {
