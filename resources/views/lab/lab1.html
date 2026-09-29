@@ -4,45 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Membuat Grafik dengan JS dan CSS</title>
-    <style>
-        /* Mengatur ukuran dan tampilan kontainer grafik */
-        .chart-container {
-            width: 80%;
-            max-width: 600px;
-            margin: 20px auto;
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-    <div class="chart-container">
+    <div>
         <canvas id="myChart"></canvas>
     </div>
 
-    <!-- Memuat Chart.js dari CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ctx = document.getElementById('myChart').getContext('2d');
 
-        const myChart = new Chart(ctx, {
-            type: 'bar', // Jenis grafik: 'bar', 'line', 'pie', dll.
+    <!-- Memuat Chart.js dari CDN -->
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'bar',
             data: {
-                labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei'],
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
                 datasets: [{
-                    label: 'Penjualan Produk',
-                    data: [12, 19, 3, 5, 2],
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    label: '# of Votes',
+                    data: [12, 19, 3, 5, 2, 3],
                     borderWidth: 1
                 }]
             },
             options: {
-                responsive: true,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -50,8 +36,8 @@
                 }
             }
         });
-
     </script>
+
 </body>
 
 </html>

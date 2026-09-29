@@ -10,10 +10,13 @@ class SettingsController extends Controller
 {
     public function index()
     {
-        $retentionDays = (int) SystemSetting::getValue(
+        $retentionValue = SystemSetting::getValue(
             MonitoringLogCleanup::RETENTION_SETTING,
             (string) MonitoringLogCleanup::DEFAULT_RETENTION_DAYS
         );
+        $retentionDays = in_array($retentionValue, ['0', '1', '7', '30', '365'], true)
+            ? (int) $retentionValue
+            : MonitoringLogCleanup::DEFAULT_RETENTION_DAYS;
 
         return view('dashboard.admin.pengaturan.index', compact('retentionDays'));
     }
@@ -21,7 +24,7 @@ class SettingsController extends Controller
     public function update(Request $request)
     {
         $data = $request->validate([
-            'retention_days' => ['required', 'integer', 'in:1,7,30,365'],
+            'retention_days' => ['required', 'integer', 'in:0,1,7,30,365'],
         ]);
 
         SystemSetting::setValue(

@@ -57,6 +57,7 @@
         <div class="monitoring-chart" data-chart-website-id="{{ $website->id }}">
             <div class="chart-heading">
                 <h3>{{ $website->nama_website }}</h3>
+                <span>{{ $website->instansi }}</span>
                 <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
                     <span>
                         <a
@@ -107,6 +108,8 @@
                 <strong data-field="score">-</strong>
                 <span>Skor performa</span>
             </div>
+
+            <!-- Bagian grafik/chart -->
             <canvas class="website-performance-chart" height="210"></canvas>
             <div class="chart-events" data-field="events" aria-live="polite"></div>
         </div>
@@ -121,6 +124,7 @@
     const realtimeUrl = @json(route('monitoring.realtime'));
     const csrfToken = @json(csrf_token());
     const initialWebsites = @json($websites ?? []);
+    const initialHistory = @json($chartHistory ?? []);
     const statusText = document.getElementById('realtimeStatus');
     const checkForm = document.getElementById('realtimeCheckForm');
     const checkButton = document.getElementById('realtimeCheckButton');
@@ -138,8 +142,22 @@
 
     function formatMonitoringTime(value) {
         if (!value) return '--:--';
-        const match = value.match(/(?:T|\s)(\d{2}:\d{2})/);
-        return match ? match[1] : '--:--';
+        return new Intl.DateTimeFormat('id-ID', {
+            timeZone: 'Asia/Jakarta',
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(new Date(value));
+    }
+
+    function formatMonitoringDateTime(value) {
+        if (!value) return '--';
+        return new Intl.DateTimeFormat('id-ID', {
+            timeZone: 'Asia/Jakarta',
+            day: '2-digit',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(new Date(value));
     }
 
     function drawWebsiteChart(websiteId) {
@@ -174,20 +192,25 @@
         }
 
         const plotWidth = Math.max(width - 70, 1);
-        const step = history.length === 1 ? 0 : plotWidth / (history.length - 1);
+        const timestamps = history.map(function(entry) {
+            return new Date(entry.checked_at).getTime();
+        });
+        const firstTimestamp = timestamps[0];
+        const timeRange = timestamps[timestamps.length - 1] - firstTimestamp;
         chartContext.strokeStyle = '#168c68';
         chartContext.lineWidth = 3;
         chartContext.beginPath();
 
         const points = history.map(function(entry, index) {
-            const x = 45 + (step * index);
+            const x = 45 + (timeRange > 0 ? ((timestamps[index] - firstTimestamp) / timeRange) * plotWidth :
+                (history.length === 1 ? 0 : (index / (history.length - 1)) * plotWidth));
             const y = height - 38 - (entry.score / 100) * (height - 58);
             return {
                 x,
                 y,
                 score: entry.score,
                 status: entry.status,
-                time: entry.time
+                checkedAt: entry.checked_at
             };
         });
 
@@ -211,7 +234,7 @@
             if (index % Math.max(1, Math.ceil(points.length / 6)) === 0 || index === points.length - 1) {
                 chartContext.fillStyle = '#55708c';
                 chartContext.textAlign = 'center';
-                chartContext.fillText(point.time, x, height - 8);
+                chartContext.fillText(formatMonitoringTime(point.checkedAt), x, height - 8);
             }
         });
         chartContext.textAlign = 'start';
@@ -223,7 +246,7 @@
             performanceHistory[website.id].push({
                 score: calculateScore(website),
                 status: website.status,
-                time: formatMonitoringTime(website.last_checked_at || checkedAt)
+                checked_at: website.last_checked_at || checkedAt
             });
             performanceHistory[website.id] = performanceHistory[website.id].slice(-12);
             const chartCard = document.querySelector(`[data-chart-website-id="${website.id}"]`);
@@ -250,7 +273,7 @@
         events.forEach(function(entry) {
             const event = document.createElement('span');
             event.className = entry.status === 'Offline' ? 'chart-event is-offline' : 'chart-event is-warning';
-            event.textContent = `${entry.status === 'Offline' ? 'DOWN' : 'LAMBAT'} ${entry.time}`;
+            event.textContent = `${entry.status === 'Offline' ? 'DOWN' : 'LAMBAT'} · ${formatMonitoringDateTime(entry.checked_at)}`;
             eventList.appendChild(event);
         });
     }
@@ -305,11 +328,7 @@
     });
 
     initialWebsites.forEach(function(website) {
-        performanceHistory[website.id] = website.last_checked_at ? [{
-            score: calculateScore(website),
-            status: website.status,
-            time: formatMonitoringTime(website.last_checked_at)
-        }] : [];
+        performanceHistory[website.id] = (initialHistory[website.id] || []).slice(-24);
         const chartCard = document.querySelector(`[data-chart-website-id="${website.id}"]`);
         if (chartCard) {
             chartCard.querySelector('[data-field="score"]').textContent = `${calculateScore(website)} / 100`;

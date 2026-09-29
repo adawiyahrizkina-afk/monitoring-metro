@@ -13,13 +13,19 @@ class MonitoringLogCleanup
 
     public function handle(): int
     {
-        $days = (int) SystemSetting::getValue(
+        $retentionValue = SystemSetting::getValue(
             self::RETENTION_SETTING,
             (string) self::DEFAULT_RETENTION_DAYS
         );
 
-        if (! in_array($days, [1, 7, 30, 365], true)) {
-            $days = self::DEFAULT_RETENTION_DAYS;
+        if (! in_array($retentionValue, ['0', '1', '7', '30', '365'], true)) {
+            $retentionValue = (string) self::DEFAULT_RETENTION_DAYS;
+        }
+
+        $days = (int) $retentionValue;
+
+        if ($days === 0) {
+            return 0;
         }
 
         return MonitoringLog::where(

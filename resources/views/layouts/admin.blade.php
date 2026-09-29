@@ -8,6 +8,8 @@
     <title>@yield('title', 'Monitoring Website Kota Metro')</title>
 
     <link rel="stylesheet" href="/css/layouts/layouts.css">
+
+    <link rel="shortcut icon" href="/images/logokomet.png" type="image/x-icon">
 </head>
 
 <body>

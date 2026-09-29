@@ -63,11 +63,11 @@ class MonitoringController extends Controller
                     'url' => $website->url,
                     'status' => $website->status,
                     'response_time' => $website->response_time,
-                    'last_checked_at' => $website->last_checked_at?->format('d/m/Y H:i:s'),
+                    'last_checked_at' => $website->last_checked_at?->toIso8601String(),
                     'score' => $this->performanceScore($website->response_time, $website->status),
                 ];
             })->values(),
-            'checked_at' => now()->format('d/m/Y H:i:s'),
+            'checked_at' => now()->toIso8601String(),
         ]);
     }
 
