@@ -164,8 +164,8 @@
         const canvas = document.querySelector(`[data-chart-website-id="${websiteId}"] canvas`);
         if (!canvas) return;
         const chartContext = canvas.getContext('2d');
-        const width = canvas.clientWidth || 500;
-        const height = 210;
+        const width = canvas.offsetWidth || 500;
+        const height = 100;
         const deviceRatio = window.devicePixelRatio || 1;
         canvas.width = width * deviceRatio;
         canvas.height = height * deviceRatio;
@@ -180,7 +180,7 @@
             const y = height - 38 - (value / 100) * (height - 58);
             chartContext.beginPath();
             chartContext.moveTo(42, y);
-            chartContext.lineTo(width - 15, y);
+            chartContext.lineTo(width - 5, y);
             chartContext.stroke();
             chartContext.fillText(value, 12, y + 4);
         });
