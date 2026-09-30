@@ -32,25 +32,8 @@ class WebsiteController extends Controller
     public function monitoring()
     {
         $websites = Website::latest()->get();
-        $chartHistory = $websites->mapWithKeys(function (Website $website) {
-            return [$website->id => $website->monitoringLogs()
-                ->latest('checked_at')
-                ->limit(24)
-                ->get()
-                ->reverse()
-                ->map(function (MonitoringLog $log) {
-                    return [
-                        'score' => $log->status === 'Offline' || $log->response_time === null
-                            ? 0
-                            : max(0, min(100, (int) round(100 - ($log->response_time / 50)))),
-                        'status' => $log->status,
-                        'checked_at' => $log->checked_at->toIso8601String(),
-                    ];
-                })
-                ->values()];
-        });
 
-        return view('dashboard.admin.monitoring.index', compact('websites', 'chartHistory'));
+        return view('dashboard.admin.monitoring.index', compact('websites'));
     }
 
     public function index()

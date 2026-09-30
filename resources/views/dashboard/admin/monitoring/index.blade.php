@@ -4,127 +4,123 @@
 
 @section('content')
 
+<link rel="stylesheet" href="/css/dashboard/admin/monitoring.css">
+
 <div class="page-header">
-
-    <h1>Monitoring Website</h1>
-
-    <p>
-        Melakukan pengecekan status website Pemerintah Kota Metro.
-    </p>
-
+    <div>
+        <h1>Monitoring Website</h1>
+        <p>Pantau kondisi seluruh website Pemerintah Kota Metro.</p>
+    </div>
+    <form action="{{ route('monitoring.realtime') }}" method="POST" id="realtimeCheckForm">
+        @csrf
+        <button type="submit" class="btn btn-check-all" id="realtimeCheckButton">
+            <span aria-hidden="true">↻</span> Cek semua website
+        </button>
+    </form>
 </div>
 
+<section class="monitoring-summary" aria-label="Filter status website">
+    <button type="button" class="monitoring-filter is-active" data-status-filter="all" aria-pressed="true">
+        <span>Semua</span><strong id="countAll">0</strong>
+    </button>
+    <button type="button" class="monitoring-filter" data-status-filter="Offline" aria-pressed="false">
+        <span>Offline</span><strong id="countOffline">0</strong>
+    </button>
+    <button type="button" class="monitoring-filter" data-status-filter="Warning" aria-pressed="false">
+        <span>Lambat</span><strong id="countWarning">0</strong>
+    </button>
+    <button type="button" class="monitoring-filter" data-status-filter="Online" aria-pressed="false">
+        <span>Online</span><strong id="countOnline">0</strong>
+    </button>
+    <button type="button" class="monitoring-filter" data-status-filter="Belum Dicek" aria-pressed="false">
+        <span>Belum dicek</span><strong id="countUnchecked">0</strong>
+    </button>
+</section>
 
-<div class="card">
-
-    <h2>Monitoring Website Kota Metro</h2>
-
-    <p>
-        Gunakan fitur pengecekan untuk mengetahui apakah
-        website dapat diakses atau tidak.
-    </p>
-
-    <div style="display: flex; gap: 10px;">
-        <form action="{{ route('monitoring.realtime') }}" method="POST" id="realtimeCheckForm">
-
-            @csrf
-
-            <button type="submit" class="btn" id="realtimeCheckButton">
-                ✓ Cek Semua Website
-            </button>
-
-        </form>
-
-        <input
-            type="text"
-            id="searchWebsite"
-            class="search"
-            placeholder="Cari website atau instansi..."
-            onkeyup="searchTable()">
+<section class="monitoring-list" aria-label="Daftar website yang dimonitor">
+    <div class="monitoring-toolbar">
+        <label class="monitoring-search">
+            <span class="sr-only">Cari website, instansi, atau alamat</span>
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input type="search" id="searchWebsite" placeholder="Cari nama, instansi, atau URL..." autocomplete="off">
+        </label>
+        <label class="page-size-control" for="pageSize">
+            <span>Baris</span>
+            <select id="pageSize" aria-label="Jumlah website per halaman">
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </label>
     </div>
 
-    <p class="realtime-status" id="realtimeStatus">Memuat data monitoring...</p>
+    <p class="realtime-status" id="realtimeStatus" aria-live="polite">Memuat data monitoring...</p>
 
-</div>
-
-
-<div class="card">
-
-    <h2>Hasil Monitoring</h2>
-
-    <div class="website-charts">
-        @forelse($websites ?? [] as $website)
-        <div class="monitoring-chart" data-chart-website-id="{{ $website->id }}">
-            <div class="chart-heading">
-                <h3>{{ $website->nama_website }}</h3>
-                <span>{{ $website->instansi }}</span>
-                <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-                    <span>
-                        <a
-                            href="{{ $website->url }}"
-                            target="_blank"
-                            class="url"
-                            title="{{ $website->url }}">
-                            {{ $website->url }}
+    <div class="monitoring-table-wrap">
+        <table class="monitoring-table" id="monitoringTable">
+            <thead>
+                <tr>
+                    <th scope="col">Website / Instansi</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Waktu respons</th>
+                    <th scope="col">Terakhir dicek</th>
+                </tr>
+            </thead>
+            <tbody id="monitoringRows">
+                @forelse($websites ?? [] as $website)
+                <tr data-website-id="{{ $website->id }}" data-status="{{ $website->status ?? 'Belum Dicek' }}">
+                    <td class="monitoring-website-cell">
+                        <a href="{{ $website->url }}" target="_blank" rel="noopener noreferrer" class="monitoring-website-name">
+                            {{ $website->nama_website }}
                         </a>
-                    </span>
-                    <span>
-                        <tbody>
-                            <td data-field="status">
-
-                                @if(($website->status ?? '') == 'Online')
-
-                                <span class="status-online">
-                                    ● ONLINE
-                                </span>
-
-                                @elseif(($website->status ?? '') == 'Warning')
-
-                                <span class="status status-warning">
-                                    ● WARNING
-                                </span>
-
-                                @elseif(($website->status ?? '') == 'Offline')
-
-                                <span class="status-offline">
-                                    ● OFFLINE
-                                </span>
-
-                                @else
-
-                                <span class="status-unchecked">
-                                    ● BELUM DICEK
-                                </span>
-
-                                @endif
-
-                            </td>
-                        </tbody>
-                    </span>
-                </div>
-                <span>Skor tinggi = cepat · WARNING = lambat · DOWN = tidak dapat diakses</span>
-            </div>
-            <div class="chart-meta">
-                <strong data-field="score">-</strong>
-                <span>Skor performa</span>
-            </div>
-
-            <!-- Bagian grafik/chart -->
-            <canvas class="website-performance-chart" height="210"></canvas>
-            <div class="chart-events" data-field="events" aria-live="polite"></div>
-        </div>
-        @empty
-        <p>Belum ada website untuk dimonitor.</p>
-        @endforelse
+                        <span class="monitoring-agency">{{ $website->instansi }}</span>
+                        <span class="monitoring-url" title="{{ $website->url }}">{{ $website->url }}</span>
+                    </td>
+                    <td data-field="status">
+                        @if(($website->status ?? '') === 'Online')
+                        <span class="status-online">● ONLINE</span>
+                        @elseif(($website->status ?? '') === 'Warning')
+                        <span class="status-warning">● LAMBAT</span>
+                        @elseif(($website->status ?? '') === 'Offline')
+                        <span class="status-offline">● OFFLINE</span>
+                        @else
+                        <span class="status-unchecked">● BELUM DICEK</span>
+                        @endif
+                    </td>
+                    <td class="response-cell" data-field="response">
+                        {{ $website->response_time !== null ? number_format($website->response_time / 1000, 2, ',', '.') . ' detik' : '—' }}
+                    </td>
+                    <td class="checked-cell" data-field="last-checked">
+                        @if($website->last_checked_at)
+                        {{ \Illuminate\Support\Carbon::parse($website->last_checked_at)->timezone('Asia/Jakarta')->format('d M Y, H:i') }} WIB
+                        @else
+                        Belum pernah dicek
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr class="monitoring-empty-row">
+                    <td colspan="4">Belum ada website untuk dimonitor.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+        <p class="monitoring-no-results" id="noMonitoringResults" hidden>Tidak ada website yang cocok dengan pencarian.</p>
     </div>
 
-</div>
+    <footer class="monitoring-pagination">
+        <span id="monitoringRange" aria-live="polite">Menampilkan 0 website</span>
+        <div class="pagination-controls">
+            <button type="button" id="previousPage" aria-label="Halaman sebelumnya" disabled>‹</button>
+            <span id="currentPage">1 / 1</span>
+            <button type="button" id="nextPage" aria-label="Halaman berikutnya" disabled>›</button>
+        </div>
+    </footer>
+</section>
 
 <script>
     const realtimeUrl = @json(route('monitoring.realtime'));
     const csrfToken = @json(csrf_token());
-    const initialWebsites = @json($websites ?? []);
-    const initialHistory = @json($chartHistory ?? []);
     const statusText = document.getElementById('realtimeStatus');
     const checkForm = document.getElementById('realtimeCheckForm');
     const checkButton = document.getElementById('realtimeCheckButton');
@@ -285,14 +281,27 @@
             Warning: 'status-warning',
             'Belum Dicek': 'status-unchecked'
         };
+        const statusLabels = {
+            Online: 'ONLINE',
+            Offline: 'OFFLINE',
+            Warning: 'LAMBAT',
+            'Belum Dicek': 'BELUM DICEK'
+        };
 
         websites.forEach(function(website) {
             const row = document.querySelector(`[data-website-id="${website.id}"]`);
             if (!row) return;
             const statusClass = statusClasses[website.status] || 'status-unchecked';
-            row.querySelector('[data-field="status"]').innerHTML = `<span class="${statusClass}">● ${website.status.toUpperCase()}</span>`;
+            row.dataset.status = website.status;
+            const statusLabel = statusLabels[website.status] || 'BELUM DICEK';
+            row.querySelector('[data-field="status"]').innerHTML = `<span class="${statusClass}">● ${statusLabel}</span>`;
             row.querySelector('[data-field="response"]').textContent = formatSeconds(website.response_time);
+            const checkedAt = website.last_checked_at;
+            if (checkedAt) {
+                row.querySelector('[data-field="last-checked"]').textContent = `${formatMonitoringDateTime(checkedAt)} WIB`;
+            }
         });
+        if (window.refreshMonitoringList) window.refreshMonitoringList();
     }
 
     async function refreshMonitoring() {
@@ -312,7 +321,6 @@
             if (!response.ok) throw new Error('Gagal mengambil data monitoring.');
             const data = await response.json();
             updateTable(data.websites);
-            updateCharts(data.websites, data.checked_at);
             statusText.textContent = `Diperbarui ${data.checked_at}. Pembaruan otomatis setiap 30 detik.`;
         } catch (error) {
             statusText.textContent = error.message;
@@ -327,15 +335,6 @@
         refreshMonitoring();
     });
 
-    initialWebsites.forEach(function(website) {
-        performanceHistory[website.id] = (initialHistory[website.id] || []).slice(-24);
-        const chartCard = document.querySelector(`[data-chart-website-id="${website.id}"]`);
-        if (chartCard) {
-            chartCard.querySelector('[data-field="score"]').textContent = `${calculateScore(website)} / 100`;
-            updateChartEvents(chartCard, performanceHistory[website.id]);
-        }
-        drawWebsiteChart(website.id);
-    });
     refreshMonitoring();
     setInterval(refreshMonitoring, 30000);
 </script>
