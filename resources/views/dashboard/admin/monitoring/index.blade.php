@@ -110,22 +110,11 @@
         type: 'bar',
         data: {
             datasets: [{
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], 
                 label: 'nama websitenya',
                 data: [12, 19, 3, 5, 2, 3],
                 borderWidth: 1
             }]
-            if(data < 10){
-                backgroundColor: 'red';
-                color: 'yellow';
-            }
-            else if(data < 20){
-                backgroundColor: 'yellow';
-                color: 'black';
-            }
-            else{
-                backgroundColor: 'green';
-                color: 'white';
-            }
         },
         options: {
             scales: {
