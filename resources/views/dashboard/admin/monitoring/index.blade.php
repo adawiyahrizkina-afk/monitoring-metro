@@ -4,6 +4,7 @@
 
 @section('content')
 
+
 <div class="page-header">
     <div>
         <h1>Monitoring Website</h1>

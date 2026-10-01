@@ -4,6 +4,9 @@
 
 @section('content')
 
+<!-- BAGIAN DASHBOARD AWAL -->
+
+<section id="dashboard_utama">
 <!-- TOPBAR -->
 <header class="topbar">
     <div class="topbar-left">Sistem Monitoring Website</div>
@@ -237,7 +240,11 @@
     © {{ date('Y') }} Pemerintah Kota Metro |
     Sistem Monitoring Website
 </footer>
+</section>
 
+<section id="daftar_website">
+    
+</section>
 <!-- SEARCH -->
 <script src="/js/search.js"></script>
 @endsection
