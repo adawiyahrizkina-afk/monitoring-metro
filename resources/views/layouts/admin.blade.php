@@ -3,19 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
     <title>@yield('title', 'Monitoring Website Kota Metro')</title>
-
     <link rel="stylesheet" href="/css/layouts/layouts.css">
-
     <link rel="shortcut icon" href="/images/logokomet.png" type="image/x-icon">
 </head>
 
 <body>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
+    <button type="button" class="sidebar-toggle" onclick="toggleSidebar()">
+        ☰
+    </button>
 
         <div class="logo">
 
@@ -90,6 +90,29 @@
 
     </main>
 
-</body>
+    <script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
 
+        sidebar.classList.toggle('collapsed');
+
+        if (sidebar.classList.contains('collapsed')) {
+            localStorage.setItem('sidebarStatus', 'collapsed');
+        } else {
+            localStorage.setItem('sidebarStatus', 'expanded');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+
+        const sidebarStatus = localStorage.getItem('sidebarStatus');
+
+        if (sidebarStatus === 'collapsed') {
+            sidebar.classList.add('collapsed');
+        }
+    });
+</script>
+
+</body>
 </html>
