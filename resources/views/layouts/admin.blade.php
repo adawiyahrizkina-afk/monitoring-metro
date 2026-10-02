@@ -53,8 +53,8 @@
                 Monitoring
             </a>
 
-            <a href="{{ route('riwayat.index') }}"
-                class="{{ request()->routeIs('riwayat.index') ? 'active' : '' }}" id="riwayat">
+            <a href="{{ route('riwayat.index') }}
+                class=" {{ request()->routeIs('riwayat.index') ? 'active' : '' }}" id="riwayat">
                 Riwayat Monitoring
             </a>
         </div>

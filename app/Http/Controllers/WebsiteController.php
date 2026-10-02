@@ -35,7 +35,7 @@ class WebsiteController extends Controller
         $chartHistory = $websites->mapWithKeys(function (Website $website) {
             return [$website->id => $website->monitoringLogs()
                 ->latest('checked_at')
-                ->limit(24)
+                ->limit(16)
                 ->get()
                 ->reverse()
                 ->map(function (MonitoringLog $log) {

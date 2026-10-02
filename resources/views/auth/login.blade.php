@@ -7,6 +7,7 @@
         content="width=device-width, initial-scale=1.0">
     <title>Login Admin</title>
     <link rel="stylesheet" href="/css/auth/login.css">
+    <link rel="shortcut icon" href="/images/logokomet.png" type="image/x-icon">
 </head>
 
 <body>

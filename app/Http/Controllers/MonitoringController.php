@@ -14,10 +14,24 @@ class MonitoringController extends Controller
     /**
      * Cek satu website
      */
-    public function check(Website $website)
+    public function check(\Illuminate\Http\Request $request, Website $website)
     {
         app(MonitoringLogCleanup::class)->handle();
         $this->checkWebsite($website);
+
+        if ($request->expectsJson()) {
+            $website->refresh();
+
+            return response()->json([
+                'id' => $website->id,
+                'nama_website' => $website->nama_website,
+                'url' => $website->url,
+                'status' => $website->status,
+                'response_time' => $website->response_time,
+                'last_checked_at' => $website->last_checked_at?->toIso8601String(),
+                'score' => $this->performanceScore($website->response_time, $website->status),
+            ]);
+        }
 
         return redirect()
             ->route('dashboard')

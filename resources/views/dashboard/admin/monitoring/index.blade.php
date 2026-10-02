@@ -4,342 +4,403 @@
 
 @section('content')
 
+
 <div class="page-header">
-
-    <h1>Monitoring Website</h1>
-
-    <p>
-        Melakukan pengecekan status website Pemerintah Kota Metro.
-    </p>
-
-</div>
-
-
-<div class="card">
-
-    <h2>Monitoring Website Kota Metro</h2>
-
-    <p>
-        Gunakan fitur pengecekan untuk mengetahui apakah
-        website dapat diakses atau tidak.
-    </p>
-
-    <div style="display: flex; gap: 10px;">
-        <form action="{{ route('monitoring.realtime') }}" method="POST" id="realtimeCheckForm">
-
-            @csrf
-
-            <button type="submit" class="btn" id="realtimeCheckButton">
-                ✓ Cek Semua Website
-            </button>
-
-        </form>
-
-        <input
-            type="text"
-            id="searchWebsite"
-            class="search"
-            placeholder="Cari website atau instansi..."
-            onkeyup="searchTable()">
+    <div>
+        <h1>Monitoring Website</h1>
+        <p>Pantau kondisi website Pemerintah Kota Metro.</p>
     </div>
-
-    <p class="realtime-status" id="realtimeStatus">Memuat data monitoring...</p>
-
+    <form action="{{ route('monitoring.realtime') }}" method="POST" id="realtimeCheckForm">
+        @csrf
+        <button type="submit" class="btn" id="realtimeCheckButton">Cek sekarang</button>
+    </form>
 </div>
 
+<p class="realtime-status" id="realtimeStatus" aria-live="polite">Pengecekan otomatis aktif. Memeriksa website...</p>
 
-<div class="card">
-
-    <h2>Hasil Monitoring</h2>
-
-    <div class="website-charts">
-        @forelse($websites ?? [] as $website)
-        <div class="monitoring-chart" data-chart-website-id="{{ $website->id }}">
-            <div class="chart-heading">
-                <h3>{{ $website->nama_website }}</h3>
-                <span>{{ $website->instansi }}</span>
-                <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-                    <span>
-                        <a
-                            href="{{ $website->url }}"
-                            target="_blank"
-                            class="url"
-                            title="{{ $website->url }}">
-                            {{ $website->url }}
-                        </a>
-                    </span>
-                    <span>
-                        <tbody>
-                            <td data-field="status">
-
-                                @if(($website->status ?? '') == 'Online')
-
-                                <span class="status-online">
-                                    ● ONLINE
-                                </span>
-
-                                @elseif(($website->status ?? '') == 'Warning')
-
-                                <span class="status status-warning">
-                                    ● WARNING
-                                </span>
-
-                                @elseif(($website->status ?? '') == 'Offline')
-
-                                <span class="status-offline">
-                                    ● OFFLINE
-                                </span>
-
-                                @else
-
-                                <span class="status-unchecked">
-                                    ● BELUM DICEK
-                                </span>
-
-                                @endif
-
-                            </td>
-                        </tbody>
-                    </span>
-                </div>
-                <span>Skor tinggi = cepat · WARNING = lambat · DOWN = tidak dapat diakses</span>
-            </div>
-            <div class="chart-meta">
-                <strong data-field="score">-</strong>
-                <span>Skor performa</span>
-            </div>
-
-            <!-- Bagian grafik/chart -->
-            <canvas class="website-performance-chart" height="210"></canvas>
-            <div class="chart-events" data-field="events" aria-live="polite"></div>
+<section class="monitoring-panel monitoring-chart-panel" aria-labelledby="historyTitle">
+    <div class="monitoring-panel-heading">
+        <div>
+            <h2 id="historyTitle">Riwayat performa</h2>
+            <p id="chartWebsiteInfo">Pilih website untuk melihat riwayatnya.</p>
         </div>
-        @empty
-        <p>Belum ada website untuk dimonitor.</p>
-        @endforelse
+        <div class="chart-website-controls">
+            <label class="chart-select-label" for="chartWebsiteSearch">Cari website
+                <input type="search" id="chartWebsiteSearch" placeholder="Ketik nama website">
+            </label>
+            <label class="chart-select-label" for="chartWebsiteSelect">Website
+                <select id="chartWebsiteSelect">
+                    @foreach($websites ?? [] as $website)
+                    <option value="{{ $website->id }}" data-search="{{ strtolower($website->nama_website . ' ' . $website->instansi) }}">{{ $website->nama_website }} · {{ $website->instansi }}</option>
+                    @endforeach
+                </select>
+            </label>
+        </div>
+    </div>
+    <div class="chart-legend" aria-label="Keterangan grafik">
+        <span><i class="legend-online"></i>Normal</span>
+        <span><i class="legend-warning"></i>Lambat</span>
+        <span><i class="legend-offline"></i>Down</span>
+    </div>
+    <div class="monitoring-chart-canvas-wrap">
+        <canvas id="websitePerformanceChart" role="img" aria-label="Grafik perubahan skor performa berdasarkan waktu"></canvas>
+    </div>
+    <div class="chart-events" id="chartEvents" aria-live="polite"></div>
+</section>
+
+<section class="monitoring-panel" aria-labelledby="websiteListTitle">
+    <div class="monitoring-panel-heading">
+        <div>
+            <h2 id="websiteListTitle">Daftar website</h2>
+            <p id="websiteResultCount">Memuat daftar...</p>
+        </div>
+        <div class="monitoring-filters">
+            <label class="monitoring-search-label" for="searchWebsite">Cari</label>
+            <input type="search" id="searchWebsite" placeholder="Nama, instansi, atau URL">
+            <label class="monitoring-search-label" for="statusFilter">Status</label>
+            <select id="statusFilter">
+                <option value="">Semua status</option>
+                <option value="Offline">Down</option>
+                <option value="Warning">Lambat</option>
+                <option value="Online">Online</option>
+                <option value="Belum Dicek">Belum dicek</option>
+            </select>
+        </div>
     </div>
 
-</div>
+    <div class="monitoring-table-wrap">
+        <table class="monitoring-table">
+            <thead>
+                <tr>
+                    <th scope="col">Website / instansi</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Respons</th>
+                    <th scope="col">Terakhir dicek</th>
+                    <th scope="col">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="websiteTable">
+                @forelse($websites ?? [] as $website)
+                <tr
+                    data-website-id="{{ $website->id }}"
+                    data-website-name="{{ $website->nama_website }}"
+                    data-instansi="{{ $website->instansi }}"
+                    data-check-url="{{ route('website.check', $website) }}"
+                    tabindex="0"
+                    aria-label="Pilih {{ $website->nama_website }} untuk melihat riwayat dan memeriksa status">
+                    <td>
+                        <strong>{{ $website->nama_website }}</strong>
+                        <span>{{ $website->instansi }}</span>
+                    </td>
+                    <td data-field="status" data-status="{{ $website->status }}">{{ $website->status }}</td>
+                    <td data-field="response">
+                        {{ $website->response_time === null ? '-' : number_format($website->response_time / 1000, 2, ',', '.') . ' detik' }}
+                    </td>
+                    <td data-field="checked-at">{{ $website->last_checked_at?->format('d/m/Y H:i:s') ?? '-' }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="checkWebsite({{ $website->id }})">Periksa</button>
+                        <a href="{{ route('riwayat.index') }}"><button class="btn btn-sm btn-primary">Detail</button></a>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5">Belum ada website yang terdaftar.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+        <p class="monitoring-empty" id="websiteEmptyState" hidden>Tidak ada website yang cocok dengan pencarian ini.</p>
+    </div>
+
+    <div class="monitoring-pagination">
+        <label for="pageSize">Baris per halaman</label>
+        <select id="pageSize">
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+        <span id="pageStatus">Halaman 1 dari 1</span>
+        <button type="button" id="previousPage" aria-label="Halaman sebelumnya">Sebelumnya</button>
+        <button type="button" id="nextPage" aria-label="Halaman berikutnya">Berikutnya</button>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    const realtimeUrl = @json(route('monitoring.realtime'));
-    const csrfToken = @json(csrf_token());
-    const initialWebsites = @json($websites ?? []);
-    const initialHistory = @json($chartHistory ?? []);
-    const statusText = document.getElementById('realtimeStatus');
-    const checkForm = document.getElementById('realtimeCheckForm');
-    const checkButton = document.getElementById('realtimeCheckButton');
-    const performanceHistory = {};
-    let isRefreshing = false;
+    const historyByWebsite = @json($chartHistory ?? []);
+    const chartSelect = document.getElementById('chartWebsiteSelect');
+    const chartSearch = document.getElementById('chartWebsiteSearch');
+    const chartInfo = document.getElementById('chartWebsiteInfo');
+    const chartEvents = document.getElementById('chartEvents');
+    const websiteRows = document.getElementById('websiteTable');
+    const realtimeForm = document.getElementById('realtimeCheckForm');
+    const realtimeButton = document.getElementById('realtimeCheckButton');
+    const realtimeStatus = document.getElementById('realtimeStatus');
+    const originalOptions = Array.from(chartSelect.options).map((option) => option.cloneNode(true));
+    const chartHistoryLimit = 16;
+    let isChecking = false;
+    let refreshTimer = null;
 
-    function formatSeconds(milliseconds) {
-        return milliseconds === null ? '-' : `${(milliseconds / 1000).toFixed(2).replace('.', ',')} detik`;
-    }
+    Object.keys(historyByWebsite).forEach((websiteId) => {
+        historyByWebsite[websiteId] = historyByWebsite[websiteId].slice(-chartHistoryLimit);
+    });
+    const statusColors = {
+        Online: '#168c68',
+        Warning: '#d47b16',
+        Offline: '#c83b3b',
+        'Belum Dicek': '#83918a'
+    };
 
-    function calculateScore(website) {
-        if (website.status === 'Offline' || website.response_time === null) return 0;
-        return Math.max(0, Math.min(100, Math.round(100 - (website.response_time / 50))));
-    }
+    const performanceChart = new Chart(document.getElementById('websitePerformanceChart'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Skor performa',
+                data: [],
+                borderColor: '#168c68',
+                pointBackgroundColor: [],
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderWidth: 2,
+                tension: 0.25
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Waktu pemeriksaan'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    min: 0,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Skor performa'
+                    }
+                }
+            }
+        }
+    });
 
-    function formatMonitoringTime(value) {
+    function formatCheckTime(value) {
         if (!value) return '--:--';
-        return new Intl.DateTimeFormat('id-ID', {
-            timeZone: 'Asia/Jakarta',
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? '--:--' : date.toLocaleTimeString('en-GB', {
             hour: '2-digit',
-            minute: '2-digit'
-        }).format(new Date(value));
-    }
-
-    function formatMonitoringDateTime(value) {
-        if (!value) return '--';
-        return new Intl.DateTimeFormat('id-ID', {
-            timeZone: 'Asia/Jakarta',
-            day: '2-digit',
-            month: 'short',
-            hour: '2-digit',
-            minute: '2-digit'
-        }).format(new Date(value));
-    }
-
-    function drawWebsiteChart(websiteId) {
-        const canvas = document.querySelector(`[data-chart-website-id="${websiteId}"] canvas`);
-        if (!canvas) return;
-        const chartContext = canvas.getContext('2d');
-        const width = canvas.clientWidth || 500;
-        const height = 210;
-        const deviceRatio = window.devicePixelRatio || 1;
-        canvas.width = width * deviceRatio;
-        canvas.height = height * deviceRatio;
-        chartContext.setTransform(deviceRatio, 0, 0, deviceRatio, 0, 0);
-        chartContext.clearRect(0, 0, width, height);
-
-        chartContext.strokeStyle = '#d9e5df';
-        chartContext.fillStyle = '#55708c';
-        chartContext.font = '12px Arial';
-
-        [0, 25, 50, 75, 100].forEach(function(value) {
-            const y = height - 38 - (value / 100) * (height - 58);
-            chartContext.beginPath();
-            chartContext.moveTo(42, y);
-            chartContext.lineTo(width - 15, y);
-            chartContext.stroke();
-            chartContext.fillText(value, 12, y + 4);
-        });
-
-        const history = performanceHistory[websiteId] || [];
-        if (!history.length) {
-            chartContext.fillText('Belum ada data monitoring.', 55, height / 2);
-            return;
-        }
-
-        const plotWidth = Math.max(width - 70, 1);
-        const timestamps = history.map(function(entry) {
-            return new Date(entry.checked_at).getTime();
-        });
-        const firstTimestamp = timestamps[0];
-        const timeRange = timestamps[timestamps.length - 1] - firstTimestamp;
-        chartContext.strokeStyle = '#168c68';
-        chartContext.lineWidth = 3;
-        chartContext.beginPath();
-
-        const points = history.map(function(entry, index) {
-            const x = 45 + (timeRange > 0 ? ((timestamps[index] - firstTimestamp) / timeRange) * plotWidth :
-                (history.length === 1 ? 0 : (index / (history.length - 1)) * plotWidth));
-            const y = height - 38 - (entry.score / 100) * (height - 58);
-            return {
-                x,
-                y,
-                score: entry.score,
-                status: entry.status,
-                checkedAt: entry.checked_at
-            };
-        });
-
-        chartContext.beginPath();
-        points.forEach(function(point, index) {
-            index === 0 ?
-                chartContext.moveTo(point.x, point.y) :
-                chartContext.lineTo(point.x, point.y);
-        });
-        chartContext.stroke();
-
-        points.forEach(function(point, index) {
-            const x = point.x;
-            const y = point.y;
-            chartContext.fillStyle = point.status === 'Offline' ? '#c83b3b' :
-                point.status === 'Warning' ? '#d47b16' : '#168c68';
-            chartContext.beginPath();
-            chartContext.arc(x, y, 5, 0, Math.PI * 2);
-            chartContext.fill();
-
-            if (index % Math.max(1, Math.ceil(points.length / 6)) === 0 || index === points.length - 1) {
-                chartContext.fillStyle = '#55708c';
-                chartContext.textAlign = 'center';
-                chartContext.fillText(formatMonitoringTime(point.checkedAt), x, height - 8);
-            }
-        });
-        chartContext.textAlign = 'start';
-    }
-
-    function updateCharts(websites, checkedAt) {
-        websites.forEach(function(website) {
-            if (!performanceHistory[website.id]) performanceHistory[website.id] = [];
-            performanceHistory[website.id].push({
-                score: calculateScore(website),
-                status: website.status,
-                checked_at: website.last_checked_at || checkedAt
-            });
-            performanceHistory[website.id] = performanceHistory[website.id].slice(-12);
-            const chartCard = document.querySelector(`[data-chart-website-id="${website.id}"]`);
-            if (chartCard) {
-                chartCard.querySelector('[data-field="score"]').textContent = `${calculateScore(website)} / 100`;
-                updateChartEvents(chartCard, performanceHistory[website.id]);
-            }
-            drawWebsiteChart(website.id);
+            minute: '2-digit',
+            second: '2-digit'
         });
     }
 
-    function updateChartEvents(chartCard, history) {
-        const eventList = chartCard.querySelector('[data-field="events"]');
-        const events = history.filter(function(entry) {
-            return entry.status === 'Warning' || entry.status === 'Offline';
-        }).slice().reverse();
-
-        eventList.replaceChildren();
+    function renderEvents(history) {
+        const events = history.filter((entry) => entry.status === 'Warning' || entry.status === 'Offline').slice().reverse();
+        chartEvents.replaceChildren();
         if (!events.length) {
-            eventList.textContent = 'Tidak ada gangguan pada pengecekan terakhir.';
+            chartEvents.textContent = 'Tidak ada gangguan pada riwayat yang ditampilkan.';
             return;
         }
 
-        events.forEach(function(entry) {
+        events.forEach((entry) => {
             const event = document.createElement('span');
             event.className = entry.status === 'Offline' ? 'chart-event is-offline' : 'chart-event is-warning';
-            event.textContent = `${entry.status === 'Offline' ? 'DOWN' : 'LAMBAT'} · ${formatMonitoringDateTime(entry.checked_at)}`;
-            eventList.appendChild(event);
+            event.textContent = `${entry.status === 'Offline' ? 'DOWN' : 'LAMBAT'} ${formatCheckTime(entry.checked_at)}`;
+            chartEvents.appendChild(event);
         });
     }
 
-    function updateTable(websites) {
-        const statusClasses = {
-            Online: 'status-online',
-            Offline: 'status-offline',
-            Warning: 'status-warning',
-            'Belum Dicek': 'status-unchecked'
-        };
+    function updateChart(websiteId) {
+        const selectedOption = Array.from(chartSelect.options).find((option) => option.value === String(websiteId));
+        const row = websiteRows.querySelector(`[data-website-id="${websiteId}"]`);
+        const history = historyByWebsite[websiteId] || [];
+        const websiteName = row?.dataset.websiteName || selectedOption?.textContent || 'Website';
+        const institution = row?.dataset.instansi;
 
-        websites.forEach(function(website) {
-            const row = document.querySelector(`[data-website-id="${website.id}"]`);
-            if (!row) return;
-            const statusClass = statusClasses[website.status] || 'status-unchecked';
-            row.querySelector('[data-field="status"]').innerHTML = `<span class="${statusClass}">● ${website.status.toUpperCase()}</span>`;
-            row.querySelector('[data-field="response"]').textContent = formatSeconds(website.response_time);
+        chartInfo.textContent = institution ? `${websiteName} · ${institution}` : websiteName;
+        performanceChart.data.labels = history.map((entry) => formatCheckTime(entry.checked_at));
+        performanceChart.data.datasets[0].label = `Skor performa · ${websiteName}`;
+        performanceChart.data.datasets[0].data = history.map((entry) => entry.score);
+        performanceChart.data.datasets[0].pointBackgroundColor = history.map((entry) => statusColors[entry.status] || statusColors['Belum Dicek']);
+        performanceChart.update();
+        renderEvents(history);
+    }
+
+    function filterChartOptions() {
+        const query = chartSearch.value.trim().toLocaleLowerCase('id-ID');
+        const matches = originalOptions.filter((option) => (option.dataset.search || option.textContent.toLocaleLowerCase('id-ID')).includes(query));
+        const previousValue = chartSelect.value;
+        chartSelect.replaceChildren(...matches);
+
+        if (!matches.length) {
+            const emptyOption = new Option('Tidak ada website yang cocok', '');
+            emptyOption.disabled = true;
+            chartSelect.add(emptyOption);
+            chartInfo.textContent = 'Tidak ada website yang cocok dengan pencarian.';
+            return;
+        }
+
+        chartSelect.value = matches.some((option) => option.value === previousValue) ? previousValue : matches[0].value;
+        updateChart(chartSelect.value);
+    }
+
+    function selectWebsite(websiteId) {
+        if (!originalOptions.some((option) => option.value === String(websiteId))) return;
+        if (!Array.from(chartSelect.options).some((option) => option.value === String(websiteId))) {
+            chartSearch.value = '';
+            filterChartOptions();
+        }
+        chartSelect.value = String(websiteId);
+        updateChart(websiteId);
+    }
+
+    async function checkWebsite(row) {
+        if (isChecking || row.dataset.checking === 'true') return;
+        isChecking = true;
+        row.dataset.checking = 'true';
+        const statusCell = row.querySelector('[data-field="status"]');
+        const responseCell = row.querySelector('[data-field="response"]');
+        const checkedAtCell = row.querySelector('[data-field="checked-at"]');
+        statusCell.textContent = 'Memeriksa...';
+
+        try {
+            const response = await fetch(row.dataset.checkUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': @json(csrf_token())
+                }
+            });
+            if (!response.ok) throw new Error('Gagal memeriksa website.');
+
+            const result = await response.json();
+            statusCell.textContent = result.status;
+            statusCell.dataset.status = result.status;
+            responseCell.textContent = result.response_time === null ? '-' : `${(result.response_time / 1000).toFixed(2).replace('.', ',')} detik`;
+            checkedAtCell.textContent = result.last_checked_at ? new Date(result.last_checked_at).toLocaleString('id-ID') : '-';
+
+            const history = historyByWebsite[result.id] || (historyByWebsite[result.id] = []);
+            history.push({
+                score: result.score,
+                status: result.status,
+                checked_at: result.last_checked_at
+            });
+            historyByWebsite[result.id] = history.slice(-chartHistoryLimit);
+            if (chartSelect.value === String(result.id)) updateChart(result.id);
+            realtimeStatus.textContent = `${result.nama_website} diperiksa pada ${formatCheckTime(result.last_checked_at)}.`;
+        } catch (error) {
+            statusCell.textContent = 'Gagal diperiksa';
+            realtimeStatus.textContent = error.message;
+        } finally {
+            delete row.dataset.checking;
+            isChecking = false;
+        }
+    }
+
+    function updateWebsiteResult(result) {
+        const row = websiteRows.querySelector(`[data-website-id="${result.id}"]`);
+        if (!row) return;
+
+        const statusCell = row.querySelector('[data-field="status"]');
+        statusCell.textContent = result.status;
+        statusCell.dataset.status = result.status;
+        row.querySelector('[data-field="response"]').textContent = result.response_time === null ?
+            '-' :
+            `${(result.response_time / 1000).toFixed(2).replace('.', ',')} detik`;
+        row.querySelector('[data-field="checked-at"]').textContent = result.last_checked_at ?
+            new Date(result.last_checked_at).toLocaleString('id-ID') :
+            '-';
+
+        const history = historyByWebsite[result.id] || (historyByWebsite[result.id] = []);
+        history.push({
+            score: result.score,
+            status: result.status,
+            checked_at: result.last_checked_at
         });
+        historyByWebsite[result.id] = history.slice(-chartHistoryLimit);
     }
 
     async function refreshMonitoring() {
-        if (isRefreshing) return;
-        isRefreshing = true;
-        checkButton.disabled = true;
-        statusText.textContent = 'Sedang memperbarui hasil monitoring...';
+        if (isChecking || document.hidden) return;
+        isChecking = true;
+        realtimeButton.disabled = true;
+        realtimeStatus.textContent = 'Sedang memeriksa website aktif...';
 
         try {
-            const response = await fetch(realtimeUrl, {
+            const response = await fetch(realtimeForm.action, {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': @json(csrf_token())
                 }
             });
-            if (!response.ok) throw new Error('Gagal mengambil data monitoring.');
+            if (!response.ok) throw new Error('Gagal memperbarui data monitoring.');
+
             const data = await response.json();
-            updateTable(data.websites);
-            updateCharts(data.websites, data.checked_at);
-            statusText.textContent = `Diperbarui ${data.checked_at}. Pembaruan otomatis setiap 30 detik.`;
+            data.websites.forEach(updateWebsiteResult);
+            if (chartSelect.value) updateChart(chartSelect.value);
+            realtimeStatus.textContent = `Pembaruan terakhir ${formatCheckTime(data.checked_at)}. Pengecekan otomatis setiap 30 detik.`;
         } catch (error) {
-            statusText.textContent = error.message;
+            realtimeStatus.textContent = error.message;
         } finally {
-            checkButton.disabled = false;
-            isRefreshing = false;
+            isChecking = false;
+            realtimeButton.disabled = false;
         }
     }
 
-    checkForm.addEventListener('submit', function(event) {
+    function scheduleNextRefresh() {
+        window.clearInterval(refreshTimer);
+        if (!document.hidden) refreshTimer = window.setInterval(refreshMonitoring, 30000);
+    }
+
+    realtimeForm.addEventListener('submit', (event) => {
         event.preventDefault();
         refreshMonitoring();
     });
 
-    initialWebsites.forEach(function(website) {
-        performanceHistory[website.id] = (initialHistory[website.id] || []).slice(-24);
-        const chartCard = document.querySelector(`[data-chart-website-id="${website.id}"]`);
-        if (chartCard) {
-            chartCard.querySelector('[data-field="score"]').textContent = `${calculateScore(website)} / 100`;
-            updateChartEvents(chartCard, performanceHistory[website.id]);
-        }
-        drawWebsiteChart(website.id);
+    document.addEventListener('visibilitychange', () => {
+        window.clearInterval(refreshTimer);
+        if (document.hidden) return;
+        refreshMonitoring();
+        scheduleNextRefresh();
     });
-    refreshMonitoring();
-    setInterval(refreshMonitoring, 30000);
-</script>
 
-<script src="/js/search.js"></script>
+    chartSearch.addEventListener('input', filterChartOptions);
+    chartSelect.addEventListener('change', () => updateChart(chartSelect.value));
+    websiteRows.addEventListener('click', (event) => {
+        const row = event.target.closest('tr[data-website-id]');
+        if (!row) return;
+        selectWebsite(row.dataset.websiteId);
+        checkWebsite(row);
+    });
+    websiteRows.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        const row = event.target.closest('tr[data-website-id]');
+        if (!row) return;
+        event.preventDefault();
+        selectWebsite(row.dataset.websiteId);
+        checkWebsite(row);
+    });
+
+    if (chartSelect.value) updateChart(chartSelect.value);
+    refreshMonitoring();
+    scheduleNextRefresh();
+</script>
 
 @endsection
