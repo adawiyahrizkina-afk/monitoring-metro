@@ -25,8 +25,20 @@
             <p id="chartWebsiteInfo">Pilih website untuk melihat riwayatnya.</p>
         </div>
         <div class="chart-website-controls">
-            <label class="chart-select-label" for="chartWebsiteSearch">Cari website
-                <input type="search" id="chartWebsiteSearch" placeholder="Ketik nama website">
+            <label class="chart-select-label" for="chartWebsiteSearch">
+                <div style="gap: 5px; display: flex; align-items: center;">
+                    Cari website
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="gray">
+                        <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+                    </svg>
+                </div>
+                
+                <input
+                    type="search"
+                    id="chartWebsiteSearch"
+                    class="search"
+                    placeholder="Ketik nama website"
+                    onkeyup="searchTable()">
             </label>
             <label class="chart-select-label" for="chartWebsiteSelect">Website
                 <select id="chartWebsiteSelect">
@@ -139,6 +151,8 @@
     const realtimeStatus = document.getElementById('realtimeStatus');
     const originalOptions = Array.from(chartSelect.options).map((option) => option.cloneNode(true));
     const chartHistoryLimit = 16;
+    const monitoringIntervalSeconds = @json($monitoringIntervalSeconds);
+    const monitoringIntervalMilliseconds = monitoringIntervalSeconds * 1000;
     let isChecking = false;
     let refreshTimer = null;
 
@@ -208,6 +222,12 @@
             minute: '2-digit',
             second: '2-digit'
         });
+    }
+
+    function formatMonitoringInterval() {
+        return monitoringIntervalSeconds % 60 === 0
+            ? `${monitoringIntervalSeconds / 60} menit`
+            : `${monitoringIntervalSeconds} detik`;
     }
 
     function renderEvents(history) {
@@ -355,7 +375,7 @@
             const data = await response.json();
             data.websites.forEach(updateWebsiteResult);
             if (chartSelect.value) updateChart(chartSelect.value);
-            realtimeStatus.textContent = `Pembaruan terakhir ${formatCheckTime(data.checked_at)}. Pengecekan otomatis setiap 30 detik.`;
+            realtimeStatus.textContent = `Pembaruan terakhir ${formatCheckTime(data.checked_at)}. Pengecekan otomatis setiap ${formatMonitoringInterval()}.`;
         } catch (error) {
             realtimeStatus.textContent = error.message;
         } finally {
@@ -366,7 +386,7 @@
 
     function scheduleNextRefresh() {
         window.clearInterval(refreshTimer);
-        if (!document.hidden) refreshTimer = window.setInterval(refreshMonitoring, 30000);
+        if (!document.hidden) refreshTimer = window.setInterval(refreshMonitoring, monitoringIntervalMilliseconds);
     }
 
     realtimeForm.addEventListener('submit', (event) => {
@@ -397,6 +417,11 @@
         selectWebsite(row.dataset.websiteId);
         checkWebsite(row);
     });
+
+    const requestedWebsiteId = new URLSearchParams(window.location.search).get('website');
+    if (requestedWebsiteId && originalOptions.some((option) => option.value === requestedWebsiteId)) {
+        chartSelect.value = requestedWebsiteId;
+    }
 
     if (chartSelect.value) updateChart(chartSelect.value);
     refreshMonitoring();

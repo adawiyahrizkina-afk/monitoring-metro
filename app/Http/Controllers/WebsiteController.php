@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MonitoringLog;
+use App\Models\SystemSetting;
 use App\Models\Website;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,6 @@ class WebsiteController extends Controller
         $warning = $websites->where('status', 'Warning')->count();
         $unchecked = $websites->where('status', 'Belum Dicek')->count();
         $monitoringActive = $websites->where('monitoring_aktif', true)->count();
-
         return view('dashboard.admin.index', compact(
             'websites',
             'total',
@@ -32,6 +32,14 @@ class WebsiteController extends Controller
     public function monitoring()
     {
         $websites = Website::latest()->get();
+        $monitoringIntervalSeconds = (int) SystemSetting::getValue(
+            SystemSetting::MONITORING_INTERVAL_KEY,
+            (string) SystemSetting::DEFAULT_MONITORING_INTERVAL
+        );
+        if (! in_array($monitoringIntervalSeconds, SystemSetting::MONITORING_INTERVAL_OPTIONS, true)) {
+            $monitoringIntervalSeconds = SystemSetting::DEFAULT_MONITORING_INTERVAL;
+        }
+
         $chartHistory = $websites->mapWithKeys(function (Website $website) {
             return [$website->id => $website->monitoringLogs()
                 ->latest('checked_at')
@@ -50,13 +58,47 @@ class WebsiteController extends Controller
                 ->values()];
         });
 
-        return view('dashboard.admin.monitoring.index', compact('websites', 'chartHistory'));
+        return view('dashboard.admin.monitoring.index', compact(
+            'websites',
+            'chartHistory',
+            'monitoringIntervalSeconds'
+        ));
     }
 
     public function index()
     {
         $websites = Website::latest()->get();
-        return view('dashboard.admin.website.index', compact('websites'));
+        $websiteListIntervalSeconds = (int) SystemSetting::getValue(
+            SystemSetting::WEBSITE_LIST_INTERVAL_KEY,
+            (string) SystemSetting::DEFAULT_WEBSITE_LIST_INTERVAL
+        );
+        if (! in_array($websiteListIntervalSeconds, SystemSetting::WEBSITE_LIST_INTERVAL_OPTIONS, true)) {
+            $websiteListIntervalSeconds = SystemSetting::DEFAULT_WEBSITE_LIST_INTERVAL;
+        }
+
+        $chartHistory = $websites->mapWithKeys(function (Website $website) {
+            return [$website->id => $website->monitoringLogs()
+                ->latest('checked_at')
+                ->limit(4)
+                ->get()
+                ->reverse()
+                ->map(function (MonitoringLog $log) {
+                    return [
+                        'score' => $log->status === 'Offline' || $log->response_time === null
+                            ? 0
+                            : max(0, min(100, (int) round(100 - ($log->response_time / 50)))),
+                        'status' => $log->status,
+                        'checked_at' => $log->checked_at->toIso8601String(),
+                    ];
+                })
+                ->values()];
+        });
+
+        return view('dashboard.admin.website.index', compact(
+            'websites',
+            'chartHistory',
+            'websiteListIntervalSeconds'
+        ));
     }
 
     public function create()

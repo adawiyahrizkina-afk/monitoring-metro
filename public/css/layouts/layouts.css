@@ -49,33 +49,24 @@ body {
 
 .sidebar-toggle {
     position: absolute;
-
     top: 20px;
     right: 15px;
-
     width: 35px;
     height: 35px;
-
     border: none;
     border-radius: 5px;
-
-    background: rgba(255, 255, 255, 0.9);
-    color: #333;
-
     font-size: 18px;
     cursor: pointer;
-
     z-index: 9999;
-
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-toggle:hover {
-    background: white;
+    background: var(--biru-light);
 }
-
 
 /* =========================================================
    LOGO
@@ -104,7 +95,6 @@ body {
     margin-top: 25px;
 }
 
-
 /* =========================================================
    MENU TITLE
 ========================================================= */
@@ -119,7 +109,6 @@ body {
     align-items: center;
     gap: 7px;
 }
-
 
 /* =========================================================
    MENU
@@ -151,7 +140,6 @@ body {
     background: var(--biru);
 }
 
-
 /* =========================================================
    LOGOUT
 ========================================================= */
@@ -171,7 +159,6 @@ body {
     cursor: pointer;
 }
 
-
 /* =========================================================
    CONTENT
 ========================================================= */
@@ -184,7 +171,6 @@ body {
     /* TAMBAHAN */
     transition: margin-left 0.3s ease;
 }
-
 
 /* =========================================================
    PAGE HEADER
@@ -225,7 +211,6 @@ body {
 .content {
     padding: 30px 35px;
 }
-
 
 /* =========================================================
    HEADER
@@ -287,7 +272,6 @@ body {
     color: #17324d;
 }
 
-
 /* =========================================================
    ALERT
 ========================================================= */
@@ -302,7 +286,6 @@ body {
     background: #e6f8ec;
     color: #087c54;
 }
-
 
 /* =========================================================
    STATISTICS
@@ -357,7 +340,6 @@ body {
 .active-number {
     color: #168c68;
 }
-
 
 /* =========================================================
    TABLE
@@ -453,7 +435,6 @@ tr:hover {
     text-decoration: underline;
 }
 
-
 /* =========================================================
    STATUS
 ========================================================= */
@@ -491,7 +472,6 @@ tr:hover {
     color: #65736e;
 }
 
-
 /* =========================================================
    AKSI
 ========================================================= */
@@ -519,6 +499,55 @@ tr:hover {
     background: #0d7555;
 }
 
+.website-mini-chart-cell {
+    min-width: 150px;
+}
+
+.website-check-status {
+    min-height: 18px;
+    margin: -10px 0 12px;
+    color: #58645f;
+    font-size: 13px;
+}
+
+.website-mini-chart-wrap {
+    position: relative;
+    width: 128px;
+    height: 42px;
+}
+
+.website-mini-chart-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.website-mini-chart-wrap canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.website-mini-chart-cell [data-recheck-timer] {
+    display: block;
+    min-height: 14px;
+    margin-top: 4px;
+    color: #66736c;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.website-check-control {
+    display: grid;
+    justify-items: start;
+    gap: 4px;
+}
+
+.btn-action:disabled {
+    background: #8a9790;
+    cursor: not-allowed;
+}
 
 /* =========================================================
    FOOTER
@@ -533,7 +562,6 @@ footer {
 
     font-size: 14px;
 }
-
 
 /* =========================================================
    LOGO TAMBAHAN
@@ -564,7 +592,6 @@ footer {
     font-size: 14px;
     margin-top: 8px;
 }
-
 
 /* =========================================================
    CARD
@@ -597,8 +624,7 @@ footer {
 .website-charts {
     display: grid;
 
-    grid-template-columns:
-        repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 
     gap: 18px;
 }
@@ -1055,7 +1081,6 @@ footer {
     width: 100%;
 }
 
-
 /* =========================================================
    BUTTON
 ========================================================= */
@@ -1142,7 +1167,6 @@ footer {
     background: var(--biru-light);
 }
 
-
 /* =========================================================
    TABLE TAMBAHAN
 ========================================================= */
@@ -1170,7 +1194,6 @@ td {
 
     border-bottom: 1px solid #eee;
 }
-
 
 /* =========================================================
    STATUS TAMBAHAN
@@ -1207,7 +1230,6 @@ td {
 
     font-weight: bold;
 }
-
 
 /* =========================================================
    DASHBOARD STAT
@@ -1251,7 +1273,6 @@ td {
     color: var(--biru);
 }
 
-
 /* =========================================================
    SIDEBAR COLLAPSE
    TAMBAHAN FITUR KECIL / BESAR
@@ -1262,19 +1283,16 @@ td {
     width: 75px;
 }
 
-
 /* Isi halaman ikut bergeser */
 .sidebar.collapsed + .main {
     margin-left: 75px;
 }
-
 
 /* Logo tulisan disembunyikan */
 .sidebar.collapsed .logo h2,
 .sidebar.collapsed .logo p {
     display: none;
 }
-
 
 /* Logo menjadi kecil */
 .sidebar.collapsed .logo {
@@ -1288,7 +1306,6 @@ td {
     height: 45px !important;
 }
 
-
 /* Judul MENU UTAMA dan SISTEM */
 .sidebar.collapsed .menu-title {
     justify-content: center;
@@ -1301,6 +1318,11 @@ td {
     display: none;
 }
 
+.menu-icon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
 /* =========================================================
    MENU KETIKA SIDEBAR KECIL
@@ -1308,80 +1330,50 @@ td {
 
 .sidebar.collapsed .menu {
     width: 100%;
-
     padding: 0;
 }
 
 .sidebar.collapsed .menu a {
     position: relative;
-
     width: 45px;
-
     height: 45px;
-
     padding: 0;
-
     margin: 0 auto 8px auto;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     font-size: 0;
 }
 
-
 /* Ikon untuk Dashboard */
 .sidebar.collapsed #dashboard::before {
-    content: "⌂";
-
     font-size: 23px;
-
     color: white;
 }
-
 
 /* Ikon untuk Daftar Website */
 .sidebar.collapsed #daftar::before {
-    content: "▣";
-
     font-size: 21px;
-
     color: white;
 }
-
 
 /* Ikon untuk Monitoring */
 .sidebar.collapsed #monitoring::before {
-    content: "◉";
-
     font-size: 21px;
-
     color: white;
 }
-
 
 /* Ikon untuk Riwayat */
 .sidebar.collapsed #riwayat::before {
-    content: "◷";
-
     font-size: 23px;
-
     color: white;
 }
-
 
 /* Ikon untuk Pengaturan */
 .sidebar.collapsed #pengaturan::before {
-    content: "⚙";
-
     font-size: 21px;
-
     color: white;
 }
-
 
 /* =========================================================
    LOGOUT SAAT SIDEBAR KECIL
@@ -1389,28 +1381,20 @@ td {
 
 .sidebar.collapsed .logout {
     left: 0;
-
     width: 100%;
-
     text-align: center;
 }
 
 .sidebar.collapsed .logout button {
     width: 100%;
-
     font-size: 0;
-
     text-align: center;
 }
 
 .sidebar.collapsed .logout button::before {
-    content: "⇥";
-
     font-size: 23px;
-
     color: white;
 }
-
 
 /* =========================================================
    TOMBOL TOGGLE KETIKA KECIL
@@ -1419,7 +1403,6 @@ td {
 .sidebar.collapsed .sidebar-toggle {
     right: 20px;
 }
-
 
 /* =========================================================
    RESPONSIVE
@@ -1462,11 +1445,15 @@ canvas {
 
 .main {
     width: calc(100% - 280px);
-    transition: margin-left .3s ease, width .3s ease;
+    transition:
+        margin-left 0.3s ease,
+        width 0.3s ease;
 }
 
 .sidebar {
-    transition: width .3s ease, transform .3s ease;
+    transition:
+        width 0.3s ease,
+        transform 0.3s ease;
 }
 
 .table-wrapper {
@@ -1534,12 +1521,6 @@ button,
     font-size: 0 !important;
 }
 
-.sidebar.collapsed #dashboard::before { content: "⌂"; font-size: 23px; }
-.sidebar.collapsed #daftar::before { content: "▣"; font-size: 21px; }
-.sidebar.collapsed #monitoring::before { content: "◉"; font-size: 21px; }
-.sidebar.collapsed #riwayat::before { content: "◷"; font-size: 23px; }
-.sidebar.collapsed #pengaturan::before { content: "⚙"; font-size: 21px; }
-
 .sidebar.collapsed .logout {
     left: 0 !important;
     width: 100% !important;
@@ -1552,7 +1533,6 @@ button,
 }
 
 .sidebar.collapsed .logout button::before {
-    content: "⇥";
     font-size: 23px;
 }
 
@@ -1561,8 +1541,14 @@ button,
    > 1200px
 ========================= */
 @media (min-width: 1201px) {
-    .sidebar { width: 280px; min-width: 280px; }
-    .main { margin-left: 280px; width: calc(100% - 280px); }
+    .sidebar {
+        width: 280px;
+        min-width: 280px;
+    }
+    .main {
+        margin-left: 280px;
+        width: calc(100% - 280px);
+    }
 
     .statistics,
     .stats {
@@ -1581,9 +1567,18 @@ button,
    901px - 1200px
 ========================= */
 @media (min-width: 901px) and (max-width: 1200px) {
-    .sidebar { width: 220px; min-width: 220px; }
-    .main { margin-left: 220px; width: calc(100% - 220px); padding: 25px; }
-    .content { padding: 25px; }
+    .sidebar {
+        width: 220px;
+        min-width: 220px;
+    }
+    .main {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+        padding: 25px;
+    }
+    .content {
+        padding: 25px;
+    }
 
     .statistics,
     .stats {
@@ -1641,19 +1636,15 @@ button,
         font-size: 0 !important;
     }
 
-    .sidebar #dashboard::before { content: "⌂"; font-size: 23px; }
-    .sidebar #daftar::before { content: "▣"; font-size: 21px; }
-    .sidebar #monitoring::before { content: "◉"; font-size: 21px; }
-    .sidebar #riwayat::before { content: "◷"; font-size: 23px; }
-    .sidebar #pengaturan::before { content: "⚙"; font-size: 21px; }
-
     .main {
         margin-left: 75px !important;
         width: calc(100% - 75px) !important;
         padding: 0 !important;
     }
 
-    .content { padding: 20px !important; }
+    .content {
+        padding: 20px !important;
+    }
 
     .page-header {
         flex-direction: column;
@@ -1734,12 +1725,6 @@ button,
         border-radius: 9px;
     }
 
-    .sidebar #dashboard::before { content: "⌂"; font-size: 22px; }
-    .sidebar #daftar::before { content: "▣"; font-size: 20px; }
-    .sidebar #monitoring::before { content: "◉"; font-size: 20px; }
-    .sidebar #riwayat::before { content: "◷"; font-size: 22px; }
-    .sidebar #pengaturan::before { content: "⚙"; font-size: 20px; }
-
     .sidebar .logout {
         left: 0 !important;
         width: 100% !important;
@@ -1752,7 +1737,6 @@ button,
     }
 
     .sidebar .logout button::before {
-        content: "⇥";
         font-size: 22px;
     }
 
@@ -1788,8 +1772,12 @@ button,
         gap: 8px;
     }
 
-    .monitoring-active { font-size: 11px !important; }
-    .admin-name { font-size: 12px !important; }
+    .monitoring-active {
+        font-size: 11px !important;
+    }
+    .admin-name {
+        font-size: 12px !important;
+    }
 
     .page-header {
         width: 100% !important;
@@ -1834,8 +1822,12 @@ button,
         padding: 15px !important;
     }
 
-    .stat-title { font-size: 12px !important; }
-    .stat-number { font-size: 28px !important; }
+    .stat-title {
+        font-size: 12px !important;
+    }
+    .stat-number {
+        font-size: 28px !important;
+    }
 
     .card,
     .website-container,
@@ -1912,8 +1904,12 @@ button,
         white-space: nowrap;
     }
 
-    .chart-meta { font-size: 11px !important; }
-    .chart-meta strong { font-size: 17px !important; }
+    .chart-meta {
+        font-size: 11px !important;
+    }
+    .chart-meta strong {
+        font-size: 17px !important;
+    }
 
     #performanceChart,
     canvas {
@@ -1958,23 +1954,33 @@ button,
         width: calc(100% - 55px) !important;
     }
 
-    .content { padding: 9px !important; }
+    .content {
+        padding: 9px !important;
+    }
 
     .sidebar .menu a {
         width: 39px !important;
         height: 39px !important;
     }
 
-    .page-header h1 { font-size: 19px !important; }
-    .page-header p { font-size: 11px !important; }
+    .page-header h1 {
+        font-size: 19px !important;
+    }
+    .page-header p {
+        font-size: 11px !important;
+    }
 
     .card,
     .website-container {
         padding: 11px !important;
     }
 
-    .stat-card { padding: 13px !important; }
-    .stat-number { font-size: 26px !important; }
+    .stat-card {
+        padding: 13px !important;
+    }
+    .stat-number {
+        font-size: 26px !important;
+    }
 
     .table-wrapper table {
         min-width: 600px !important;
@@ -1985,9 +1991,13 @@ button,
    IPHONE SE 375px DAN LEBIH KECIL
 ========================= */
 @media (max-width: 375px) {
-    .content { padding: 8px !important; }
+    .content {
+        padding: 8px !important;
+    }
 
-    .page-header h1 { font-size: 18px !important; }
+    .page-header h1 {
+        font-size: 18px !important;
+    }
 
     .card,
     .website-container {
@@ -1995,5 +2005,7 @@ button,
         border-radius: 10px !important;
     }
 
-    .stat-card { padding: 12px !important; }
+    .stat-card {
+        padding: 12px !important;
+    }
 }

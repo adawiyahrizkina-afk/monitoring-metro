@@ -33,7 +33,7 @@
         Tentukan kapan riwayat monitoring yang lama dihapus otomatis.
     </p>
 
-    <form action="{{ route('pengaturan.update') }}" method="POST">
+    <form action="{{ route('pengaturan.update') }}" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
         @csrf
 
         <label for="retention_days">Hapus riwayat setelah</label>
@@ -43,6 +43,23 @@
             <option value="7" @selected($retentionDays===7)>1 minggu</option>
             <option value="30" @selected($retentionDays===30)>1 bulan</option>
             <option value="365" @selected($retentionDays===365)>1 tahun</option>
+        </select><br>
+
+        <label for="website_list_interval_seconds">Interval timer Daftar Website</label>
+        <select id="website_list_interval_seconds" name="website_list_interval_seconds" class="search" required>
+            <option value="30" @selected($websiteListIntervalSeconds===30)>30 detik</option>
+            <option value="60" @selected($websiteListIntervalSeconds===60)>1 menit</option>
+            <option value="120" @selected($websiteListIntervalSeconds===120)>2 menit</option>
+            <option value="300" @selected($websiteListIntervalSeconds===300)>5 menit</option>
+        </select>
+        <p>Timer grafik menunjukkan waktu menuju interval berikutnya. Tombol cek manual tetap dapat digunakan kapan saja.</p>
+
+        <label for="monitoring_interval_seconds">Interval pengecekan halaman Monitoring</label>
+        <select id="monitoring_interval_seconds" name="monitoring_interval_seconds" class="search" required>
+            <option value="15" @selected($monitoringIntervalSeconds===15)>15 detik</option>
+            <option value="30" @selected($monitoringIntervalSeconds===30)>30 detik</option>
+            <option value="60" @selected($monitoringIntervalSeconds===60)>1 menit</option>
+            <option value="120" @selected($monitoringIntervalSeconds===120)>2 menit</option>
         </select>
 
         <button type="submit" class="btn btn-check-all">
