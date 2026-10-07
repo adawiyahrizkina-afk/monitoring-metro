@@ -2009,3 +2009,60 @@ button,
         padding: 12px !important;
     }
 }
+
+/* =========================================================
+   FIX: TABEL BISA DIGESER (SCROLL HORIZONTAL) DI HP/TABLET
+========================================================= */
+
+/* Card/container jangan memotong tabel */
+.card,
+.website-container,
+.monitoring-container,
+.form-container,
+.table-container,
+.chart-container,
+.settings-container {
+    overflow: visible !important;
+}
+
+/* Pembungkus tabel yang bisa digeser */
+.table-wrapper,
+.table-container,
+.monitoring-table-wrap {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Tabel tetap lebar penuh sesuai isinya, tidak diperas */
+.table-wrapper table,
+.table-container table,
+.website-container table,
+.card table {
+    width: 100% !important;
+    min-width: 700px !important;
+}
+
+/* Isi sel tidak turun baris terus-menerus */
+.table-wrapper th,
+.table-wrapper td,
+.website-container th,
+.website-container td,
+.card th,
+.card td {
+    white-space: nowrap;
+}
+
+/* Kolom website/URL boleh membungkus supaya tidak terlalu panjang */
+.url {
+    max-width: 220px;
+}
+
+/* Input kecil di dalam tabel jangan dipaksa 100% */
+table input[type="checkbox"],
+table input[type="radio"] {
+    width: auto !important;
+}
