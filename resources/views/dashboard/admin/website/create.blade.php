@@ -48,17 +48,28 @@
             >
 
 
-            <label>
+            <label for="instansi">
                 Instansi
             </label>
 
-            <input
-                type="text"
-                name="instansi"
-                placeholder="Contoh: Pemerintah Kota Metro"
-                value="{{ old('instansi') }}"
-                required
-            >
+            <select name="instansi" id="instansi" required>
+
+                <option value="" disabled {{ old('instansi') ? '' : 'selected' }}>
+                    -- Pilih Instansi --
+                </option>
+
+                @foreach (config('opd') as $opd)
+
+                    <option
+                        value="{{ $opd }}"
+                        {{ old('instansi') === $opd ? 'selected' : '' }}
+                    >
+                        {{ $opd }}
+                    </option>
+
+                @endforeach
+
+            </select>
 
 
             <label>

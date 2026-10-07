@@ -35,14 +35,30 @@
                     maxlength="100"
                     required>
 
+                @php
+                    $daftarOpd = config('opd');
+                    $instansiTerpilih = old('instansi', $website->instansi);
+                @endphp
+
                 <label for="instansi">Instansi</label>
-                <input
-                    id="instansi"
-                    type="text"
-                    name="instansi"
-                    value="{{ old('instansi', $website->instansi) }}"
-                    maxlength="100"
-                    required>
+                <select name="instansi" id="instansi" required>
+
+                    {{-- Jika data lama tidak ada di daftar OPD, tetap tampilkan agar tidak hilang --}}
+                    @if ($instansiTerpilih && !in_array($instansiTerpilih, $daftarOpd))
+                        <option value="{{ $instansiTerpilih }}" selected>
+                            {{ $instansiTerpilih }} (data lama)
+                        </option>
+                    @endif
+
+                    @foreach ($daftarOpd as $opd)
+                        <option
+                            value="{{ $opd }}"
+                            {{ $instansiTerpilih === $opd ? 'selected' : '' }}>
+                            {{ $opd }}
+                        </option>
+                    @endforeach
+
+                </select>
 
                 <label for="url">URL Website</label>
                 <input

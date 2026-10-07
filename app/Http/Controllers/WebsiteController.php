@@ -6,6 +6,7 @@ use App\Models\MonitoringLog;
 use App\Models\SystemSetting;
 use App\Models\Website;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class WebsiteController extends Controller
 {
@@ -110,14 +111,13 @@ class WebsiteController extends Controller
     {
         return view('dashboard.admin.website.edit', compact('website'));
     }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nama_website' => 'required|max:100',
-            'instansi' => 'required|max:100',
-            'url' => 'required|url|max:255',
-        ]);
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'nama_website' => 'required|string|max:100',
+        'instansi'     => ['required', Rule::in(config('opd'))],
+        'url'          => 'required|url|max:255',
+    ]);
 
         Website::create([
             'nama_website' => $request->nama_website,
