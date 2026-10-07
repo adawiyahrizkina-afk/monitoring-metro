@@ -35,7 +35,7 @@
 
             <tr>
                 <th>No</th>
-                <th>Nama Website</th>
+                <th>OPD</th>
                 <th>URL</th>
                 <th>Grafik</th>
                 <th>Status</th>

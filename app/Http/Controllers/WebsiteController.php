@@ -114,39 +114,41 @@ class WebsiteController extends Controller
 public function store(Request $request)
 {
     $validated = $request->validate([
-        'nama_website' => 'required|string|max:100',
-        'instansi'     => ['required', Rule::in(config('opd'))],
+        'nama_website' => ['required', Rule::in(['Dinas Komunikasi, Informatika, dan Statistik'])],
+        'instansi'     => ['required', Rule::in(collect(config('opd'))->flatten()->all())],
         'url'          => 'required|url|max:255',
     ]);
 
-        Website::create([
-            'nama_website' => $request->nama_website,
-            'instansi' => $request->instansi,
-            'url' => $request->url,
-            'status' => 'Belum Dicek',
-            'monitoring_aktif' => true,
-        ]);
+    Website::create([
+        'nama_website'     => $validated['nama_website'],
+        'instansi'         => $validated['instansi'],
+        'url'              => $validated['url'],
+        'status'           => 'Belum Dicek',
+        'monitoring_aktif' => true,
+    ]);
 
-        return redirect()
-            ->route('dashboard')
-            ->with('success', 'Website berhasil ditambahkan.');
-    }
+    return redirect()
+        ->route('dashboard')
+        ->with('success', 'Website berhasil ditambahkan.');
+}
+   public function update(Request $request, Website $website)
+{
+    $validated = $request->validate([
+        'nama_website' => 'required|string|max:100',
+        'instansi'     => 'required|string|max:100',
+        'url'          => 'required|url|max:255',
+    ]);
 
-    public function update(Request $request, Website $website)
-    {
-        $validated = $request->validate([
-            'nama_website' => 'required|string|max:100',
-            'instansi' => 'required|string|max:100',
-            'url' => 'required|url|max:255',
-        ]);
+    $website->update([
+        'nama_website' => $validated['nama_website'],
+        'instansi'     => $validated['instansi'],
+        'url'          => $validated['url'],
+    ]);
 
-        $website->update($validated);
-
-        return redirect()
-            ->route('website.index')
-            ->with('success', 'Website berhasil diperbarui.');
-    }
-
+    return redirect()
+        ->route('website.index')
+        ->with('success', 'Website berhasil diperbarui.');
+}
     public function destroy(Website $website)
     {
         $website->delete();

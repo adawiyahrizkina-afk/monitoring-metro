@@ -22,40 +22,50 @@
             </div>
             @endif
 
+            @php
+                $pengembang = 'Dinas Komunikasi, Informatika, dan Statistik';
+                $namaTerpilih = old('nama_website', $website->nama_website);
+
+                $semuaOpd = collect(config('opd'))->flatten()->all();
+                $instansiTerpilih = old('instansi', $website->instansi);
+            @endphp
+
             <form action="{{ route('website.update', $website) }}" method="POST">
                 @csrf
                 @method('PUT')
 
-                <label for="nama_website">Nama Website</label>
-                <input
-                    id="nama_website"
-                    type="text"
-                    name="nama_website"
-                    value="{{ old('nama_website', $website->nama_website) }}"
-                    maxlength="100"
-                    required>
+                <label for="nama_website">Nama Instansi</label>
+                <select name="nama_website" id="nama_website" required>
 
-                @php
-                    $daftarOpd = config('opd');
-                    $instansiTerpilih = old('instansi', $website->instansi);
-                @endphp
+                    {{-- Data lama yang bukan Diskominfo tetap ditampilkan agar tidak hilang --}}
+                    @if ($namaTerpilih && $namaTerpilih !== $pengembang)
+                        <option value="{{ $namaTerpilih }}" selected>
+                            {{ $namaTerpilih }} (data lama)
+                        </option>
+                    @endif
 
-                <label for="instansi">Instansi</label>
+                    <option value="{{ $pengembang }}" {{ $namaTerpilih === $pengembang ? 'selected' : '' }}>
+                        {{ $pengembang }}
+                    </option>
+                </select>
+
+                <label for="instansi">OPD / Open Data Kota Metro</label>
                 <select name="instansi" id="instansi" required>
 
-                    {{-- Jika data lama tidak ada di daftar OPD, tetap tampilkan agar tidak hilang --}}
-                    @if ($instansiTerpilih && !in_array($instansiTerpilih, $daftarOpd))
+                    @if ($instansiTerpilih && !in_array($instansiTerpilih, $semuaOpd))
                         <option value="{{ $instansiTerpilih }}" selected>
                             {{ $instansiTerpilih }} (data lama)
                         </option>
                     @endif
 
-                    @foreach ($daftarOpd as $opd)
-                        <option
-                            value="{{ $opd }}"
-                            {{ $instansiTerpilih === $opd ? 'selected' : '' }}>
-                            {{ $opd }}
-                        </option>
+                    @foreach (config('opd') as $kelompok => $daftar)
+                        <optgroup label="{{ $kelompok }}">
+                            @foreach ($daftar as $opd)
+                                <option value="{{ $opd }}" {{ $instansiTerpilih === $opd ? 'selected' : '' }}>
+                                    {{ $opd }}
+                                </option>
+                            @endforeach
+                        </optgroup>
                     @endforeach
 
                 </select>

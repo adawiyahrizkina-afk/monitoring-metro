@@ -19,64 +19,45 @@
         </p>
 
         @if ($errors->any())
-
             <div class="error">
-
                 @foreach ($errors->all() as $error)
-
                     <div>{{ $error }}</div>
-
                 @endforeach
-
             </div>
         @endif
-        <form
-            action="{{ route('website.store') }}"
-            method="POST"
-        >
+
+        <form action="{{ route('website.store') }}" method="POST">
             @csrf
-            <label>
-                Nama Website
-            </label>
 
-            <input
-                type="text"
-                name="nama_website"
-                placeholder="Contoh: Portal Kota Metro"
-                value="{{ old('nama_website') }}"
-                required
-            >
+            <label for="nama_website">Nama Instansi</label>
+            <select name="nama_website" id="nama_website" required>
+                <option value="Dinas Komunikasi, Informatika, dan Statistik" selected>
+                    Dinas Komunikasi, Informatika, dan Statistik
+                </option>
+            </select>
 
-
-            <label for="instansi">
-                Instansi
-            </label>
-
+            <label for="instansi">OPD / Open Data Kota Metro</label>
             <select name="instansi" id="instansi" required>
 
                 <option value="" disabled {{ old('instansi') ? '' : 'selected' }}>
-                    -- Pilih Instansi --
+                    -- Pilih OPD --
                 </option>
 
-                @foreach (config('opd') as $opd)
-
-                    <option
-                        value="{{ $opd }}"
-                        {{ old('instansi') === $opd ? 'selected' : '' }}
-                    >
-                        {{ $opd }}
-                    </option>
-
+                @foreach (config('opd') as $kelompok => $daftar)
+                    <optgroup label="{{ $kelompok }}">
+                        @foreach ($daftar as $opd)
+                            <option value="{{ $opd }}" {{ old('instansi') === $opd ? 'selected' : '' }}>
+                                {{ $opd }}
+                            </option>
+                        @endforeach
+                    </optgroup>
                 @endforeach
 
             </select>
 
-
-            <label>
-                URL Website
-            </label>
-
+            <label for="url">URL Website</label>
             <input
+                id="url"
                 type="url"
                 name="url"
                 placeholder="https://contoh.go.id"
@@ -85,15 +66,8 @@
             >
 
             <div class="buttons">
-
-                <a href="{{ route('dashboard') }}">
-                    Kembali
-                </a>
-
-                <button type="submit">
-                    Simpan Website
-                </button>
-
+                <a href="{{ route('dashboard') }}">Kembali</a>
+                <button type="submit">Simpan Website</button>
             </div>
         </form>
     </div>

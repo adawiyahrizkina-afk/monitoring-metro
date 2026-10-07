@@ -136,8 +136,8 @@
                     <thead>
                         <tr>
                             <th>NO</th>
-                            <th>NAMA WEBSITE</th>
                             <th>INSTANSI</th>
+                            <th>OPD</th>
                             <th>URL</th>
                             <th>STATUS</th>
                             <th>RESPONS (DETIK)</th>
