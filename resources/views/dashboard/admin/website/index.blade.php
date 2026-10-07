@@ -26,7 +26,7 @@
         type="text"
         id="searchWebsite"
         class="search"
-        placeholder="Cari website atau instansi..."
+        placeholder="Cari instansi, OPD, atau URL..."
         onkeyup="searchTable()">
 
     <table id="websiteTable">
@@ -35,6 +35,7 @@
 
             <tr>
                 <th>No</th>
+                <th>Nama instansi</th>
                 <th>OPD</th>
                 <th>URL</th>
                 <th>Grafik</th>
@@ -45,7 +46,7 @@
         </thead>
 
 
-        <tbody>
+        <body>
 
             @forelse($websites ?? [] as $website)
 
@@ -60,7 +61,11 @@
                 </td>
 
                 <td>
-                    {{ $website->nama_website ?? '-' }}
+                     {{ $website->nama_website ?? '-' }}
+                </td>
+
+                <td>
+                     {{ $website->instansi ?? '-' }}
                 </td>
 
                 <td>

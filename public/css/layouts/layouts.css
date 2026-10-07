@@ -396,8 +396,6 @@ th {
 
     text-align: left;
     font-size: 13px;
-
-    white-space: nowrap;
 }
 
 td {
@@ -2065,4 +2063,58 @@ button,
 table input[type="checkbox"],
 table input[type="radio"] {
     width: auto !important;
+}
+
+/* FIX TABEL SCROLL HORIZONTAL (HP / TABLET) */
+@media (max-width: 900px) {
+    html body .card,
+    html body .website-container {
+        overflow: visible !important;
+    }
+
+    html body .table-wrapper {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: scroll !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html body .table-wrapper table {
+        width: max-content !important;
+        min-width: 700px !important;
+    }
+
+    html body .table-wrapper th,
+    html body .table-wrapper td {
+        white-space: nowrap !important;
+    }
+
+    .table-wrapper::-webkit-scrollbar {
+        height: 8px;
+    }
+    .table-wrapper::-webkit-scrollbar-track {
+        background: #e6e6e6;
+        border-radius: 4px;
+    }
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: #647fbc;
+        border-radius: 4px;
+    }
+}
+
+/* =========================================================
+   LEBAR KOLOM TABEL DAFTAR WEBSITE
+   (harus paling bawah supaya menang dari aturan nowrap di atas)
+========================================================= */
+
+#websiteTable th:nth-child(2),
+#websiteTable th:nth-child(3),
+#websiteTable td:nth-child(2),
+#websiteTable td:nth-child(3) {
+    width: 200px;
+    max-width: 200px;
+    white-space: normal !important;
+    word-break: break-word;
 }
