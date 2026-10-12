@@ -6,7 +6,10 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\SettingsController;
+use App\Models\MonitoringLog;
 use App\Services\MonitoringLogCleanup;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 
 /*
@@ -71,12 +74,53 @@ Route::middleware('auth')->group(function () {
 
 
     // RIWAYAT
-    Route::get('/admin/riwayat', function () {
+    Route::get('/admin/riwayat', function (Request $request) {
+        $validated = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+        ]);
+
         app(MonitoringLogCleanup::class)->handle();
-        $logs = \App\Models\MonitoringLog::with('website')
+
+        $search = $validated['search'] ?? '';
+        $websites = MonitoringLog::with('website')
+            ->where('status', 'Offline')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->whereHas('website', function ($query) use ($search) {
+                    $query->where('nama_website', 'like', "%{$search}%")
+                        ->orWhere('url', 'like', "%{$search}%");
+                });
+            })
             ->latest('checked_at')
-            ->get();
-        return view('dashboard.admin.riwayat.index', compact('logs'));
+            ->get()
+            ->groupBy('website_id')
+            ->map(function ($logs) {
+                $latestLog = $logs->first();
+
+                return [
+                    'name' => $latestLog->website?->nama_website ?? 'Website dihapus',
+                    'url' => $latestLog->website?->url,
+                    'incidents' => $logs,
+                ];
+            })
+            ->values();
+
+        $perPage = 12;
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $websitePage = new LengthAwarePaginator(
+            $websites->slice(($page - 1) * $perPage, $perPage)->values(),
+            $websites->count(),
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
+        return view('dashboard.admin.riwayat.index', [
+            'websites' => $websitePage,
+            'search' => $search,
+        ]);
     })->name('riwayat.index');
 
 

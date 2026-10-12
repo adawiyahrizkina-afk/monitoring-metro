@@ -133,31 +133,54 @@
             const sidebar = document.getElementById('sidebar');
             const sdbaroff = document.getElementById('sidebar_off');
             const sdbaron = document.getElementById('sidebar_on');
+            const btndebar = document.querySelector('.sidebar-toggle');
 
+            // 1. Ubah class sidebar & button terlebih dahulu
             sidebar.classList.toggle('collapsed');
-
-            if (sidebar.classList.contains('collapsed')) {
-                localStorage.setItem('sidebarStatus', 'collapsed');
-            } else {
-                localStorage.setItem('sidebarStatus', 'expanded');
+            if (btndebar) {
+                btndebar.classList.toggle('collapsed');
             }
 
-            if (left === 0){
-                sdbaroff.style.display = 'flex';
-                sdbaron.style.display = 'none';
-            }else{
-                sdbaroff.style.display = 'none';
-                sdbaron.style.display = 'flex';
+            // 2. Ambil posisi tombol SETELAH class di-toggle
+            // Catatan: Jika ada CSS transition (animasi), gunakan lebar sidebar / class status langsung
+            const lihatjarak = btndebar ? btndebar.getBoundingClientRect().left : 0;
+            console.log('hasil jarak : ' + lihatjarak);
+
+            // 3. Cek kondisi berdasarkan status collapsed atau jarak tombol
+            const isCollapsed = sidebar.classList.contains('collapsed');
+
+            if (isCollapsed) {
+                if (sdbaroff) sdbaroff.style.display = 'none';
+                if (sdbaron) sdbaron.style.display = 'flex';
+                console.log('sidebar tertutup');
+                localStorage.setItem('tombolbar', 'collapsed');
+                localStorage.setItem('sidebarStatus', 'collapsed');
+            } else {
+                if (sdbaroff) sdbaroff.style.display = 'flex';
+                if (sdbaron) sdbaron.style.display = 'none';
+                console.log('sidebar terbuka');
+                localStorage.setItem('tombolbar', 'expanded');
+                localStorage.setItem('sidebarStatus', 'expanded');
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('sidebar');
+            const sdbaroff = document.getElementById('sidebar_off');
+            const sdbaron = document.getElementById('sidebar_on');
+            const btndebar = document.querySelector('.sidebar-toggle');
 
             const sidebarStatus = localStorage.getItem('sidebarStatus');
 
+            // Restore posisi awal saat halaman di-load
             if (sidebarStatus === 'collapsed') {
-                sidebar.classList.add('collapsed');
+                if (sidebar) sidebar.classList.add('collapsed');
+                if (btndebar) btndebar.classList.add('collapsed');
+                if (sdbaroff) sdbaroff.style.display = 'none';
+                if (sdbaron) sdbaron.style.display = 'flex';
+            } else {
+                if (sdbaroff) sdbaroff.style.display = 'flex';
+                if (sdbaron) sdbaron.style.display = 'none';
             }
         });
     </script>
