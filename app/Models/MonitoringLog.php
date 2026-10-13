@@ -8,6 +8,8 @@ class MonitoringLog extends Model
 {
     protected $fillable = [
         'website_id',
+        'nama_website',
+        'url',
         'status',
         'response_time',
         'checked_at',

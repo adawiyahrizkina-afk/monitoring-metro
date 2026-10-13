@@ -110,8 +110,8 @@
                     </td>
                     <td data-field="checked-at">{{ $website->last_checked_at?->format('d/m/Y H:i:s') ?? '-' }}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="checkWebsite({{ $website->id }})">Periksa</button>
-                        <a href="{{ route('riwayat.index') }}"><button class="btn btn-sm btn-primary">Detail</button></a>
+                        <button type="button" class="btn btn-sm btn-primary" data-check-website>Periksa</button>
+                        <a href="{{ route('riwayat.index') }}" class="btn btn-sm btn-primary">Detail</a>
                     </td>
                 </tr>
                 @empty
@@ -137,9 +137,10 @@
     </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@vite('resources/js/chart.js')
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
     const historyByWebsite = @json($chartHistory ?? []);
     const chartSelect = document.getElementById('chartWebsiteSelect');
     const chartSearch = document.getElementById('chartWebsiteSearch');
@@ -259,7 +260,11 @@
         performanceChart.data.datasets[0].data = history.map((entry) => entry.score);
         performanceChart.data.datasets[0].pointBackgroundColor = history.map((entry) => statusColors[entry.status] || statusColors['Belum Dicek']);
         performanceChart.update();
-        renderEvents(history);
+        if (history.length === 0) {
+            chartEvents.textContent = 'Belum ada data pemeriksaan untuk website ini.';
+        } else {
+            renderEvents(history);
+        }
     }
 
     function filterChartOptions() {
@@ -307,9 +312,7 @@
                     'X-CSRF-TOKEN': @json(csrf_token())
                 }
             });
-            if (!response.ok) throw new Error('Gagal memeriksa website.');
-
-            const result = await response.json();
+            const result = await readCheckResponse(response);
             statusCell.textContent = result.status;
             statusCell.dataset.status = result.status;
             responseCell.textContent = result.response_time === null ? '-' : `${(result.response_time / 1000).toFixed(2).replace('.', ',')} detik`;
@@ -370,9 +373,7 @@
                     'X-CSRF-TOKEN': @json(csrf_token())
                 }
             });
-            if (!response.ok) throw new Error('Gagal memperbarui data monitoring.');
-
-            const data = await response.json();
+            const data = await readCheckResponse(response);
             data.websites.forEach(updateWebsiteResult);
             if (chartSelect.value) updateChart(chartSelect.value);
             realtimeStatus.textContent = `Pembaruan terakhir ${formatCheckTime(data.checked_at)}. Pengecekan otomatis setiap ${formatMonitoringInterval()}.`;
@@ -382,6 +383,26 @@
             isChecking = false;
             realtimeButton.disabled = false;
         }
+    }
+
+    async function readCheckResponse(response) {
+        let data;
+
+        try {
+            data = await response.json();
+        } catch {
+            if (response.redirected) {
+                throw new Error('Sesi login berakhir. Silakan masuk kembali.');
+            }
+
+            throw new Error(`Server mengirim respons yang tidak valid (HTTP ${response.status}).`);
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || `Pemeriksaan gagal (HTTP ${response.status}).`);
+        }
+
+        return data;
     }
 
     function scheduleNextRefresh() {
@@ -407,15 +428,18 @@
         const row = event.target.closest('tr[data-website-id]');
         if (!row) return;
         selectWebsite(row.dataset.websiteId);
-        checkWebsite(row);
+
+        if (event.target.closest('[data-check-website]')) {
+            checkWebsite(row);
+        }
     });
     websiteRows.addEventListener('keydown', (event) => {
         if (event.key !== 'Enter' && event.key !== ' ') return;
+        if (event.target.closest('button, a, input, select')) return;
         const row = event.target.closest('tr[data-website-id]');
         if (!row) return;
         event.preventDefault();
         selectWebsite(row.dataset.websiteId);
-        checkWebsite(row);
     });
 
     const requestedWebsiteId = new URLSearchParams(window.location.search).get('website');
@@ -426,6 +450,7 @@
     if (chartSelect.value) updateChart(chartSelect.value);
     refreshMonitoring();
     scheduleNextRefresh();
+    });
 </script>
 
 @endsection

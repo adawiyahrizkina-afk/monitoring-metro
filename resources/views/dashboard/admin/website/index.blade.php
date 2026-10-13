@@ -82,6 +82,9 @@
                             <canvas data-website-chart="{{ $website->id }}" role="img" aria-label="Grafik performa {{ $website->nama_website }}"></canvas>
                         </a>
                     </div>
+                    @if (($chartHistory[$website->id] ?? collect())->isEmpty())
+                        <small data-chart-empty>Belum ada data pemeriksaan.</small>
+                    @endif
                     <small data-recheck-timer aria-live="polite"></small>
                 </td>
 
@@ -147,8 +150,9 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@vite('resources/js/chart.js')
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
     const websiteHistory = @json($chartHistory ?? []);
     const websiteCsrfToken = @json(csrf_token());
     const recheckIntervalMilliseconds = @json($websiteListIntervalSeconds * 1000);
@@ -267,9 +271,7 @@
                     'X-CSRF-TOKEN': websiteCsrfToken
                 }
             });
-            if (!response.ok) throw new Error('Pemeriksaan website gagal.');
-
-            const result = await response.json();
+            const result = await readCheckResponse(response);
             const badge = statusCell.querySelector('.status-online, .status-offline, .status-warning, .status-unchecked');
             badge.classList.remove('status-online', 'status-offline', 'status-warning', 'status-unchecked');
             badge.classList.add({
@@ -288,6 +290,7 @@
             });
             websiteHistory[result.id] = history.slice(-chartLimit);
             updateMiniChart(result.id);
+            row.querySelector('[data-chart-empty]')?.remove();
             row.dataset.lastCheckedAt = result.last_checked_at || '';
             startCountdown(row, result.last_checked_at || new Date().toISOString());
             document.getElementById('websiteCheckStatus').textContent = automatic ?
@@ -301,6 +304,26 @@
             button.textContent = 'Cek';
             updateCountdown(row);
         }
+    }
+
+    async function readCheckResponse(response) {
+        let data;
+
+        try {
+            data = await response.json();
+        } catch {
+            if (response.redirected) {
+                throw new Error('Sesi login berakhir. Silakan masuk kembali.');
+            }
+
+            throw new Error(`Server mengirim respons yang tidak valid (HTTP ${response.status}).`);
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || `Pemeriksaan website gagal (HTTP ${response.status}).`);
+        }
+
+        return data;
     }
 
     async function checkNextDueWebsite() {
@@ -328,6 +351,7 @@
     });
 
     window.setInterval(checkNextDueWebsite, 1000);
+    });
 </script>
 
 <script src="/js/search.js"></script>

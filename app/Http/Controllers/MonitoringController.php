@@ -248,6 +248,8 @@ class MonitoringController extends Controller
          */
         MonitoringLog::create([
             'website_id' => $website->id,
+            'nama_website' => $website->nama_website,
+            'url' => $website->url,
             'status' => $status,
             'response_time' => $responseTime,
             'checked_at' => now(),
