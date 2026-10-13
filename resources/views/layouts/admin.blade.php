@@ -144,7 +144,6 @@
             // 2. Ambil posisi tombol SETELAH class di-toggle
             // Catatan: Jika ada CSS transition (animasi), gunakan lebar sidebar / class status langsung
             const lihatjarak = btndebar ? btndebar.getBoundingClientRect().left : 0;
-            console.log('hasil jarak : ' + lihatjarak);
 
             // 3. Cek kondisi berdasarkan status collapsed atau jarak tombol
             const isCollapsed = sidebar.classList.contains('collapsed');
@@ -152,13 +151,11 @@
             if (isCollapsed) {
                 if (sdbaroff) sdbaroff.style.display = 'none';
                 if (sdbaron) sdbaron.style.display = 'flex';
-                console.log('sidebar tertutup');
                 localStorage.setItem('tombolbar', 'collapsed');
                 localStorage.setItem('sidebarStatus', 'collapsed');
             } else {
                 if (sdbaroff) sdbaroff.style.display = 'flex';
                 if (sdbaron) sdbaron.style.display = 'none';
-                console.log('sidebar terbuka');
                 localStorage.setItem('tombolbar', 'expanded');
                 localStorage.setItem('sidebarStatus', 'expanded');
             }

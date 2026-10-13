@@ -599,13 +599,9 @@ footer {
 
 .card {
     background: white;
-
     border-radius: 16px;
-
     padding: 25px;
-
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-
     margin-bottom: 25px;
 }
 
@@ -613,6 +609,9 @@ footer {
     background-color: gray;
     padding: 10px;
     border-radius: 10px;
+    text-align: center;
+    width: 19rem;
+    min-height: 16rem;
 }
 
 .monitoring-chart {
@@ -1093,11 +1092,8 @@ footer {
 
 .button {
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
     justify-content: center;
 }
 
@@ -1107,17 +1103,11 @@ footer {
 
 .edit {
     background-color: #f2a900;
-
     color: white;
-
     border: 0;
-
     border-radius: 7px;
-
     padding: 7px;
-
     width: 50px;
-
     cursor: pointer;
 }
 
@@ -1129,42 +1119,34 @@ footer {
     padding: 12px 18px;
     min-width: 50px;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .edit:hover {
     background-color: yellow;
-
     color: black;
 }
 
 .delete:hover {
     background-color: #830000;
-
     color: white;
 }
 
 .btn {
     display: inline-block;
-
     background: var(--biru-light);
-
     color: white;
-
     text-decoration: none;
-
     border: none;
-
     padding: 11px 18px;
-
     border-radius: 8px;
-
     cursor: pointer;
-
     font-size: 14px;
 }
 
 .btn:hover {
-    background: var(--biru-light);
+    background: var(--biru);
 }
 
 /* =========================================================
