@@ -46,7 +46,7 @@
                 <img src="" alt="favicon"><br>
                 <span>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae recusandae aspernatur id praesentium veritatis quos dolore placeat maiores, perspiciatis ab iure totam fuga similique quod vel adipisci. Saepe, natus? Sit. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Autem accusamus voluptas soluta ducimus cum natus itaque laborum suscipit et quos adipisci totam, ratione alias, cumque maxime optio sint quod. Ipsum?</span><br>
             </a>
-            <div style="margin-top: 20px; width: 100%; text-align: center;">{{ $website->status }}</div>
+            <div style="margin-top: 20px; width: 100%; text-align: center;">status</div>
             <div class="interaksi" style="position: absolute; bottom: 0; left: 0; width: 100%; text-align: center;">
                 <button class="btn" style="width: 100%; border-radius: 0;">Detail</button>
                 <button class="delete" style="padding:10px; width: 100%; border-radius: 0 0 7px 7px;">clear</button>
