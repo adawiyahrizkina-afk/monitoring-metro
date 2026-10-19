@@ -111,7 +111,7 @@
                     <td data-field="checked-at">{{ $website->last_checked_at?->format('d/m/Y H:i:s') ?? '-' }}</td>
                     <td>
                         <button type="button" class="btn btn-sm btn-primary" data-check-website>Periksa</button>
-                        <a href="{{ route('riwayat.index') }}" class="btn btn-sm btn-primary">Detail</a>
+                        <a href="{{ route('riwayat.index') }}" class="detail" style="text-decoration: none;">Detail</a>
                     </td>
                 </tr>
                 @empty

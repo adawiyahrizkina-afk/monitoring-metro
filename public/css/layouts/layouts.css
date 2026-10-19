@@ -4,6 +4,8 @@
     --putih: #eeeded;
     --kuning: #f0de36;
     --merah: #d71313;
+
+    --kuning-dark: #FFCC00;
 }
 
 * {
@@ -605,8 +607,8 @@ footer {
     margin-bottom: 25px;
 }
 
-.card-child{
-    background-color: gray;
+.card-child {
+    box-shadow: 0 0px 15px rgba(0, 0, 0, 0.300);
     padding: 10px;
     border-radius: 10px;
     text-align: center;
@@ -616,13 +618,9 @@ footer {
 
 .monitoring-chart {
     margin: 20px 0 30px;
-
     padding: 18px;
-
     border: 1px solid #e1ebe6;
-
     border-radius: 10px;
-
     background: #fbfdfc;
 }
 
@@ -1087,6 +1085,68 @@ footer {
 }
 
 /* =========================================================
+   POP UP
+========================================================= */
+.pop-up{
+    /* display: none; */
+    position: absolute;
+    max-width: 100dvw;
+    height: auto;
+    padding: 20px;
+    text-align: center;
+    gap: 10px;
+    left: 15%;
+    right: 15%;
+    top: 0%;
+    border: 1px solid gray;
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    box-shadow: 9px 9px 15px black;
+    z-index: 2;
+}
+
+.pop-up form{
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    position: relative;
+    padding-bottom: 80px;
+}
+
+.pop-up input::placeholder{
+    color: white;
+}
+
+.pop-up select{
+    height: 30px;
+    border: 0;
+    border-radius: 10px;
+    padding-inline: 10px;
+    background-color: var(--biru-light);
+    color: white;
+}
+
+.pop-up input{
+    height: 30px;
+    border: 0;
+    border-radius: 10px;
+    padding-inline: 10px;
+    background-color: var(--biru-light);
+    color: white;
+}
+
+.buttons{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    position: absolute;
+    gap: 20px;
+    bottom: 0;
+    width: 100%;
+}
+
+/* =========================================================
    BUTTON
 ========================================================= */
 
@@ -1102,17 +1162,7 @@ footer {
 }
 
 .edit {
-    background-color: #f2a900;
-    color: white;
-    border: 0;
-    border-radius: 7px;
-    padding: 7px;
-    width: 50px;
-    cursor: pointer;
-}
-
-.delete {
-    background-color: #ff0000;
+    background-color: var(--kuning-dark);
     color: white;
     border: 0;
     border-radius: 7px;
@@ -1123,6 +1173,29 @@ footer {
     font-size: 14px;
 }
 
+.delete {
+    background-color: #ff0000;
+    color: white;
+    border: 0;
+    border-radius: 7px;
+    padding: 12px 18px;
+    width: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.detail {
+    border: 0;
+    background-color: yellow;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 12px 18px;
+    border-radius: 7px;
+}
+
 .edit:hover {
     background-color: yellow;
     color: black;
@@ -1130,7 +1203,12 @@ footer {
 
 .delete:hover {
     background-color: #830000;
-    color: white;
+    color: red;
+}
+
+.detail:hover {
+    background-color: var(--kuning-dark);
+    color: yellow;
 }
 
 .btn {
@@ -1139,10 +1217,12 @@ footer {
     color: white;
     text-decoration: none;
     border: none;
-    padding: 11px 18px;
-    border-radius: 8px;
+    padding: 12px 18px;
+    border-radius: 7px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: bold;
+    min-width: 50px;
 }
 
 .btn:hover {
