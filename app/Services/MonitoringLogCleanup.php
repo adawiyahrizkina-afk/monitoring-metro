@@ -28,10 +28,8 @@ class MonitoringLogCleanup
             return 0;
         }
 
-        return MonitoringLog::where(
-            'checked_at',
-            '<',
-            Carbon::now()->subDays($days)
-        )->delete();
+        return MonitoringLog::where('status', 'Online')
+            ->where('checked_at', '<', Carbon::now()->subDays($days))
+            ->delete();
     }
 }

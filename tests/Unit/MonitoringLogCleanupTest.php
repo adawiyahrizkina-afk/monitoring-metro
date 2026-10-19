@@ -25,9 +25,9 @@ class MonitoringLogCleanupTest extends TestCase
         $this->assertDatabaseHas('monitoring_logs', ['id' => $log->id]);
     }
 
-    public function test_configured_retention_still_deletes_expired_logs(): void
+    public function test_configured_retention_deletes_expired_online_logs(): void
     {
-        $log = $this->createLog(Carbon::now()->subDays(31));
+        $log = $this->createLog(Carbon::now()->subDays(31), 'Online');
         SystemSetting::setValue(MonitoringLogCleanup::RETENTION_SETTING, '30');
 
         $deletedCount = app(MonitoringLogCleanup::class)->handle();
@@ -36,7 +36,20 @@ class MonitoringLogCleanupTest extends TestCase
         $this->assertDatabaseMissing('monitoring_logs', ['id' => $log->id]);
     }
 
-    private function createLog(Carbon $checkedAt): MonitoringLog
+    public function test_configured_retention_keeps_expired_incident_logs(): void
+    {
+        $offlineLog = $this->createLog(Carbon::now()->subDays(31), 'Offline');
+        $warningLog = $this->createLog(Carbon::now()->subDays(31), 'Warning');
+        SystemSetting::setValue(MonitoringLogCleanup::RETENTION_SETTING, '30');
+
+        $deletedCount = app(MonitoringLogCleanup::class)->handle();
+
+        $this->assertSame(0, $deletedCount);
+        $this->assertDatabaseHas('monitoring_logs', ['id' => $offlineLog->id]);
+        $this->assertDatabaseHas('monitoring_logs', ['id' => $warningLog->id]);
+    }
+
+    private function createLog(Carbon $checkedAt, string $status = 'Offline'): MonitoringLog
     {
         $website = Website::create([
             'nama_website' => 'Website Tes',
@@ -46,7 +59,7 @@ class MonitoringLogCleanupTest extends TestCase
 
         return MonitoringLog::create([
             'website_id' => $website->id,
-            'status' => 'Offline',
+            'status' => $status,
             'checked_at' => $checkedAt,
             'keterangan' => 'Tes',
         ]);

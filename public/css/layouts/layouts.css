@@ -5,7 +5,7 @@
     --kuning: #f0de36;
     --merah: #d71313;
 
-    --kuning-dark: #FFCC00;
+    --kuning-dark: #ffcc00;
 }
 
 * {
@@ -455,18 +455,18 @@ tr:hover {
 }
 
 .status-online {
-    background: #d7f8e5;
-    color: #087c54;
+    background: #168c68;
+    color: #fff;
 }
 
 .status-offline {
-    background: #ffe0e0;
-    color: #d92929;
+    background: #c83b3b;
+    color: #fff;
 }
 
 .status-warning {
-    background: #fff0c9;
-    color: #a66a00;
+    background: #f0c541;
+    color: #342800;
 }
 
 .status-unchecked {
@@ -608,12 +608,12 @@ footer {
 }
 
 .card-child {
-    box-shadow: 0 0px 15px rgba(0, 0, 0, 0.300);
+    box-shadow: 0 0px 15px rgba(0, 0, 0, 0.3);
     padding: 10px;
     border-radius: 10px;
     text-align: center;
-    width: 19rem;
-    min-height: 16rem;
+    width: 20rem;
+    min-height: 22rem;
 }
 
 .monitoring-chart {
@@ -917,8 +917,8 @@ footer {
 
 .status-warning {
     display: inline-block;
-    background: #fff0d9;
-    color: #995500;
+    background: #f0c541;
+    color: #342800;
     font-weight: 700;
 }
 
@@ -1054,6 +1054,55 @@ footer {
         width: 100%;
     }
 
+    .website-name-with-favicon,
+    .incident-website-heading {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .website-favicon {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        flex: 0 0 auto;
+    }
+
+    .incident-website-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+        gap: 16px;
+    }
+
+    .incident-website-card {
+        width: auto;
+        min-height: 0;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .incident-website-card h2,
+    .incident-website-heading h1 {
+        margin: 0;
+    }
+
+    .incident-website-heading .website-favicon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .incident-website-card p {
+        margin: 0;
+    }
+
+    .incident-empty {
+        grid-column: 1 / -1;
+        text-align: center;
+    }
+
     .monitoring-search-label {
         flex: 1 1 100%;
     }
@@ -1087,8 +1136,8 @@ footer {
 /* =========================================================
    POP UP
 ========================================================= */
-.pop-up{
-    /* display: none; */
+.pop-up {
+    display: none;
     position: absolute;
     max-width: 100dvw;
     height: auto;
@@ -1105,7 +1154,48 @@ footer {
     z-index: 2;
 }
 
-.pop-up form{
+.pop-up.is-open {
+    display: block;
+    animation: website-popup-enter 220ms ease-out both;
+}
+
+.pop-up.is-closing {
+    display: block;
+    animation: website-popup-exit 180ms ease-in both;
+}
+
+@keyframes website-popup-enter {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes website-popup-exit {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pop-up.is-open,
+    .pop-up.is-closing {
+        animation: none;
+    }
+}
+
+.pop-up form {
     gap: 10px;
     display: flex;
     flex-direction: column;
@@ -1114,11 +1204,11 @@ footer {
     padding-bottom: 80px;
 }
 
-.pop-up input::placeholder{
+.pop-up input::placeholder {
     color: white;
 }
 
-.pop-up select{
+.pop-up select {
     height: 30px;
     border: 0;
     border-radius: 10px;
@@ -1127,7 +1217,7 @@ footer {
     color: white;
 }
 
-.pop-up input{
+.pop-up input {
     height: 30px;
     border: 0;
     border-radius: 10px;
@@ -1136,7 +1226,7 @@ footer {
     color: white;
 }
 
-.buttons{
+.buttons {
     display: flex;
     justify-content: center;
     text-align: center;
@@ -1179,7 +1269,7 @@ footer {
     border: 0;
     border-radius: 7px;
     padding: 12px 18px;
-    width: 50px;
+    width: auto;
     cursor: pointer;
     font-weight: bold;
     font-size: 14px;
@@ -1264,9 +1354,9 @@ td {
 .status-online {
     display: inline-block;
 
-    background: #d9f6e9;
+    background: #168c68;
 
-    color: #08754f;
+    color: #fff;
 
     padding: 6px 12px;
 
@@ -1280,9 +1370,9 @@ td {
 .status-offline {
     display: inline-block;
 
-    background: #fde1e5;
+    background: #c83b3b;
 
-    color: #d32f2f;
+    color: #fff;
 
     padding: 6px 12px;
 

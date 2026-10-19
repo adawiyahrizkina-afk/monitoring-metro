@@ -7,9 +7,9 @@ use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\SettingsController;
 use App\Models\MonitoringLog;
+use App\Models\Website;
 use App\Services\MonitoringLogCleanup;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 
 /*
@@ -82,46 +82,56 @@ Route::middleware('auth')->group(function () {
         app(MonitoringLogCleanup::class)->handle();
 
         $search = $validated['search'] ?? '';
-        $websites = MonitoringLog::with('website')
-            ->where('status', 'Offline')
+        $latestIncidentAt = MonitoringLog::query()
+            ->select('checked_at')
+            ->whereColumn('website_id', 'websites.id')
+            ->whereIn('status', ['Offline', 'Warning'])
+            ->latest('checked_at')
+            ->limit(1);
+        $latestIncidentStatus = MonitoringLog::query()
+            ->select('status')
+            ->whereColumn('website_id', 'websites.id')
+            ->whereIn('status', ['Offline', 'Warning'])
+            ->latest('checked_at')
+            ->limit(1);
+
+        $websites = Website::query()
+            ->select('websites.*')
+            ->selectSub($latestIncidentAt, 'latest_incident_at')
+            ->selectSub($latestIncidentStatus, 'latest_incident_status')
+            ->withCount(['monitoringLogs as incident_count' => function ($query) {
+                $query->whereIn('status', ['Offline', 'Warning']);
+            }])
+            ->whereHas('monitoringLogs', function ($query) {
+                $query->whereIn('status', ['Offline', 'Warning']);
+            })
             ->when($search !== '', function ($query) use ($search) {
-                $query->whereHas('website', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
                     $query->where('nama_website', 'like', "%{$search}%")
                         ->orWhere('url', 'like', "%{$search}%");
                 });
             })
-            ->latest('checked_at')
-            ->get()
-            ->groupBy('website_id')
-            ->map(function ($logs) {
-                $latestLog = $logs->first();
-
-                return [
-                    'name' => $latestLog->website?->nama_website ?? 'Website dihapus',
-                    'url' => $latestLog->website?->url,
-                    'incidents' => $logs,
-                ];
-            })
-            ->values();
-
-        $perPage = 12;
-        $page = LengthAwarePaginator::resolveCurrentPage();
-        $websitePage = new LengthAwarePaginator(
-            $websites->slice(($page - 1) * $perPage, $perPage)->values(),
-            $websites->count(),
-            $perPage,
-            $page,
-            [
-                'path' => $request->url(),
-                'query' => $request->query(),
-            ]
-        );
+            ->orderByDesc('latest_incident_at')
+            ->paginate(12)
+            ->withQueryString();
 
         return view('dashboard.admin.riwayat.index', [
-            'websites' => $websitePage,
+            'websites' => $websites,
             'search' => $search,
         ]);
     })->name('riwayat.index');
+
+    Route::get('/admin/riwayat/{website}', function (Website $website) {
+        $logs = $website->monitoringLogs()
+            ->whereIn('status', ['Offline', 'Warning'])
+            ->latest('checked_at')
+            ->paginate(50);
+
+        return view('dashboard.admin.riwayat.detail', [
+            'website' => $website,
+            'logs' => $logs,
+        ]);
+    })->name('riwayat.website');
 
 
     // MONITORING

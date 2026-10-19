@@ -30,7 +30,7 @@
     <h2>Retensi Riwayat Monitoring</h2>
 
     <p>
-        Tentukan kapan riwayat monitoring yang lama dihapus otomatis.
+        Tentukan kapan log pemeriksaan normal (Online) dihapus otomatis. Laporan Warning dan Down disimpan tanpa batas waktu.
     </p>
 
     <form action="{{ route('pengaturan.update') }}" method="POST" style="display: flex; flex-direction: column; gap: 10px;">

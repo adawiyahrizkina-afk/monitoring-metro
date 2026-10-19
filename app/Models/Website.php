@@ -21,6 +21,18 @@ class Website extends Model
         'last_checked_at' => 'datetime',
     ];
 
+    public function getFaviconUrlAttribute(): ?string
+    {
+        $parts = parse_url($this->url);
+        if (! isset($parts['scheme'], $parts['host'])) {
+            return null;
+        }
+
+        $port = isset($parts['port']) ? ':' . $parts['port'] : '';
+
+        return $parts['scheme'] . '://' . $parts['host'] . $port . '/favicon.ico';
+    }
+
     public function monitoringLogs()
     {
         return $this->hasMany(

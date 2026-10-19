@@ -18,9 +18,9 @@
 
 <div class="card" style="position: relative;">
 
-    <a href="{{ route('website.create') }}" class="btn">
+    <button type="button" class="btn" data-open-add-website>
         + Tambah Website
-    </a>
+    </button>
 
     <input
         type="text"
@@ -52,6 +52,9 @@
             <tr
                 data-website-row
                 data-website-id="{{ $website->id }}"
+                data-website-name="{{ $website->nama_website }}"
+                data-website-instansi="{{ $website->instansi }}"
+                data-website-url="{{ $website->url }}"
                 data-check-url="{{ route('website.check', $website) }}"
                 data-last-checked-at="{{ $website->last_checked_at?->toIso8601String() }}">
 
@@ -60,7 +63,14 @@
                 </td>
 
                 <td>
-                    {{ $website->nama_website ?? '-' }}
+                    <span class="website-name-with-favicon">
+                        <img
+                            src="{{ $website->favicon_url }}"
+                            alt=""
+                            class="website-favicon"
+                            onerror="this.hidden = true">
+                        {{ $website->nama_website ?? '-' }}
+                    </span>
                 </td>
 
                 <td>
@@ -119,7 +129,7 @@
                 </td>
 
                 <td class="button">
-                    <a href="{{ route('website.edit', $website) }}"><button class="edit">Edit</button></a>
+                    <button type="button" class="edit" data-edit-website>Edit</button>
                     <form action="{{ route('website.destroy', $website) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus website ini? Riwayat monitoringnya juga akan terhapus.');">
                         @csrf
                         @method('DELETE')
@@ -147,9 +157,9 @@
         </tbody>
     </table>
 
-    <div class="pop-up" id="tambah" style="display: none;">
+    <div class="pop-up" id="tambah" aria-labelledby="tambahWebsiteTitle" aria-hidden="true">
 
-        <h1>Tambah Website</h1>
+        <h1 id="tambahWebsiteTitle">Tambah Website</h1>
 
         <p class="description">
             Tambahkan website Pemerintah Kota Metro
@@ -184,11 +194,11 @@
                 required>
 
 
-            <label for="instansi">
+            <label for="add_instansi">
                 Instansi
             </label>
 
-            <select name="instansi" id="instansi" required>
+            <select name="instansi" id="add_instansi" required>
 
                 <option value="" disabled {{ old('instansi') ? '' : 'selected' }}>
                     -- Pilih Instansi --
@@ -219,7 +229,7 @@
 
             <div class="buttons" align="center">
 
-                <button class="delete" style="width: 100%;">
+                <button type="button" class="delete" style="width: 100%;" data-close-popup>
                     Batal
                 </button>
 
@@ -232,8 +242,8 @@
         </form>
     </div>
 
-    <div class="pop-up" id="edit">
-        <h1>Edit Website</h1>
+    <div class="pop-up" id="edit" aria-labelledby="editWebsiteTitle" aria-hidden="true">
+        <h1 id="editWebsiteTitle">Edit Website</h1>
         <p class="description">Perbarui informasi website yang dipantau.</p>
 
         @if ($errors->any())
@@ -244,33 +254,30 @@
         </div>
         @endif
 
-        <form action="{{ route('website.update', $website) }}" method="POST">
+        <form
+            action="{{ route('website.update', ['website' => '__WEBSITE_ID__']) }}"
+            data-update-url-template="{{ route('website.update', ['website' => '__WEBSITE_ID__']) }}"
+            method="POST">
             @csrf
             @method('PUT')
+            <input type="hidden" name="website_id" value="{{ old('website_id') }}">
 
             <label for="nama_website">Nama Website</label>
             <input
                 id="nama_website"
                 type="text"
                 name="nama_website"
-                value="{{ old('nama_website', $website->nama_website) }}"
+                value="{{ old('nama_website') }}"
                 maxlength="100"
                 required>
 
             @php
             $daftarOpd = config('opd');
-            $instansiTerpilih = old('instansi', $website->instansi);
+            $instansiTerpilih = old('instansi');
             @endphp
 
-            <label for="instansi">Instansi</label>
-            <select name="instansi" id="instansi" required>
-
-                {{-- Jika data lama tidak ada di daftar OPD, tetap tampilkan agar tidak hilang --}}
-                @if ($instansiTerpilih && !in_array($instansiTerpilih, $daftarOpd))
-                <option value="{{ $instansiTerpilih }}" selected>
-                    {{ $instansiTerpilih }} (data lama)
-                </option>
-                @endif
+            <label for="edit_instansi">Instansi</label>
+            <select name="instansi" id="edit_instansi" required>
 
                 @foreach ($daftarOpd as $opd)
                 <option
@@ -287,12 +294,12 @@
                 id="url"
                 type="url"
                 name="url"
-                value="{{ old('url', $website->url) }}"
+                value="{{ old('url') }}"
                 maxlength="255"
                 required>
 
             <div class="buttons">
-                <button class="delete" style="width: 100%;">batal</button>
+                <button type="button" class="delete" style="width: 100%;" data-close-popup>Batal</button>
                 <button type="submit" class="btn" style="width: 100%;">Simpan Perubahan</button>
             </div>
         </form>
@@ -303,6 +310,76 @@
 @vite('resources/js/chart.js')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const addPopup = document.getElementById('tambah');
+        const editPopup = document.getElementById('edit');
+        const editForm = editPopup.querySelector('form');
+        const editWebsiteId = editForm.querySelector('[name="website_id"]');
+        const editName = editForm.querySelector('[name="nama_website"]');
+        const editAgency = editForm.querySelector('[name="instansi"]');
+        const editUrl = editForm.querySelector('[name="url"]');
+
+        function closePopups() {
+            [addPopup, editPopup].forEach((popup) => {
+                popup.classList.remove('is-open');
+                popup.setAttribute('aria-hidden', 'true');
+            });
+        }
+
+        function openPopup(popup) {
+            closePopups();
+            void popup.offsetWidth;
+            popup.classList.add('is-open');
+            popup.setAttribute('aria-hidden', 'false');
+        }
+
+        function prepareEdit(row) {
+            const websiteId = row.dataset.websiteId;
+            const agency = row.dataset.websiteInstansi || '';
+            const agencyOption = Array.from(editAgency.options)
+                .find((option) => option.value === agency);
+
+            if (!agencyOption && agency) {
+                editAgency.add(new Option(`${agency} (data lama)`, agency));
+            }
+
+            editWebsiteId.value = websiteId;
+            editName.value = row.dataset.websiteName || '';
+            editAgency.value = agency;
+            editUrl.value = row.dataset.websiteUrl || '';
+            editForm.action = editForm.dataset.updateUrlTemplate.replace('__WEBSITE_ID__', encodeURIComponent(websiteId));
+            openPopup(editPopup);
+        }
+
+        document.querySelector('[data-open-add-website]')?.addEventListener('click', () => openPopup(addPopup));
+        document.querySelectorAll('[data-close-popup]').forEach((button) => {
+            button.addEventListener('click', closePopups);
+        });
+        document.querySelectorAll('[data-edit-website]').forEach((button) => {
+            button.addEventListener('click', () => prepareEdit(button.closest('[data-website-row]')));
+        });
+
+        const oldWebsiteId = @json(old('website_id'));
+        const hasValidationErrors = @json($errors->any());
+        if (hasValidationErrors) {
+            if (oldWebsiteId) {
+                const row = Array.from(document.querySelectorAll('[data-website-row]'))
+                    .find((websiteRow) => websiteRow.dataset.websiteId === String(oldWebsiteId));
+
+                if (row) {
+                    prepareEdit(row);
+                    editName.value = @json(old('nama_website'));
+                    const oldAgency = @json(old('instansi'));
+                    if (oldAgency && !Array.from(editAgency.options).some((option) => option.value === oldAgency)) {
+                        editAgency.add(new Option(`${oldAgency} (data lama)`, oldAgency));
+                    }
+                    editAgency.value = oldAgency;
+                    editUrl.value = @json(old('url'));
+                }
+            } else {
+                openPopup(addPopup);
+            }
+        }
+
         const websiteHistory = @json($chartHistory ?? []);
         const websiteCsrfToken = @json(csrf_token());
         const recheckIntervalMilliseconds = @json($websiteListIntervalSeconds * 1000);

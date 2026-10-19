@@ -23,7 +23,7 @@
     </header>
 
     <!-- CONTENT -->
-    <section class="content">
+    <section class="content" style="position: relative;">
 
         <!-- HEADER -->
         <div class="page-header">
@@ -44,9 +44,9 @@
                     </button>
                 </form>
 
-                <a href="{{ route('website.create') }}" class="btn btn-add">
+                <button class="btn btn-add" onclick="tambah()">
                     ＋ Tambah Website
-                </a>
+                </button>
 
             </div>
         </div>
@@ -154,7 +154,12 @@
                             <td>{{ $index + 1 }}</td>
 
                             <td>
-                                <span class="website-name">
+                                <span class="website-name website-name-with-favicon">
+                                    <img
+                                        src="{{ $website->favicon_url }}"
+                                        alt=""
+                                        class="website-favicon"
+                                        onerror="this.hidden = true">
                                     {{ $website->nama_website }}
                                 </span>
                             </td>
@@ -234,6 +239,92 @@
                 </table>
 
             </div>
+            <div style="position:fixed; top: 20%; left: 20px; right: 20px; max-width: inherit; margin: 0; text-align: center;">
+                <div class="pop-up" id="tambah" aria-labelledby="tambahWebsiteTitle" aria-hidden="true">
+
+                    <h1 id="tambahWebsiteTitle">Tambah Website</h1>
+
+                    <p class="description">
+                        Tambahkan website Pemerintah Kota Metro
+                        yang ingin dipantau.
+                    </p>
+
+                    @if ($errors->any())
+
+                    <div class="error">
+
+                        @foreach ($errors->all() as $error)
+
+                        <div>{{ $error }}</div>
+
+                        @endforeach
+
+                    </div>
+                    @endif
+                    <form
+                        action="{{ route('website.store') }}"
+                        method="POST">
+                        @csrf
+                        <label>
+                            Nama Website
+                        </label>
+
+                        <input
+                            type="text"
+                            name="nama_website"
+                            placeholder="Contoh: Portal Kota Metro"
+                            value="{{ old('nama_website') }}"
+                            required>
+
+
+                        <label for="add_instansi">
+                            Instansi
+                        </label>
+
+                        <select name="instansi" id="add_instansi" required>
+
+                            <option value="" disabled {{ old('instansi') ? '' : 'selected' }}>
+                                -- Pilih Instansi --
+                            </option>
+
+                            @foreach (config('opd') as $opd)
+
+                            <option
+                                value="{{ $opd }}"
+                                {{ old('instansi') === $opd ? 'selected' : '' }}>
+                                {{ $opd }}
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                        <label>
+                            URL Website
+                        </label>
+
+                        <input
+                            type="url"
+                            name="url"
+                            placeholder="https://contoh.go.id"
+                            value="{{ old('url') }}"
+                            required>
+
+                        <div class="buttons" align="center">
+
+                            <button type="button" class="delete" style="width: 100%;" onclick="batal()" data-close-popup>
+                                Batal
+                            </button>
+
+
+                            <button type="submit" class="btn" style="width: 100%;">
+                                Simpan Website
+                            </button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
     </section>
@@ -249,4 +340,47 @@
 </section>
 <!-- SEARCH -->
 <script src="/js/search.js"></script>
+<script>
+    let popupCloseTimer;
+
+    function bukaPopup(popup) {
+        window.clearTimeout(popupCloseTimer);
+        popup.classList.remove('is-closing');
+        popup.style.display = 'block';
+        void popup.offsetWidth;
+        popup.classList.add('is-open');
+        popup.setAttribute('aria-hidden', 'false');
+    }
+
+    function tutupPopup(popup) {
+        if (!popup.classList.contains('is-open')) return;
+
+        popup.classList.remove('is-open');
+        popup.classList.add('is-closing');
+        popup.setAttribute('aria-hidden', 'true');
+
+        const selesaiMenutup = () => {
+            if (!popup.classList.contains('is-closing')) return;
+
+            popup.classList.remove('is-closing');
+            popup.style.display = 'none';
+        };
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            selesaiMenutup();
+            return;
+        }
+
+        popup.addEventListener('animationend', selesaiMenutup, { once: true });
+        popupCloseTimer = window.setTimeout(selesaiMenutup, 250);
+    }
+
+    function tambah() {
+        bukaPopup(document.getElementById('tambah'));
+    }
+
+    function batal() {
+        tutupPopup(document.getElementById('tambah'));
+    }
+</script>
 @endsection
