@@ -1,47 +1,97 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
-    <title>Membuat Grafik dengan JS dan CSS</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Width Mengikuti Sidebar</title>
+    <style>
+        /* Reset & Base Styling */
+        * {
+            box-sizing: border-box; /* Sangat penting agar padding tidak menambah total lebar */
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
 
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 1. Sidebar dibuat responsif (lebar 25% dari layar) */
+        .sidebar {
+            width: 25%; 
+            min-width: 200px; /* Batas minimal agar tidak terlalu kekecilan */
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* 2. Elemen bertipe FIXED di dalam sidebar */
+        .menu-fixed {
+            position: fixed;
+            top: 20px;
+            /* left diatur dinamis lewat JS, atau disesuaikan jika sidebar punya padding luar */
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Konten Utama */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ecf0f1;
+        }
+    </style>
+</head>
 <body>
 
-    <!-- <div>
-        <canvas id="myChart"></canvas>
+    <div class="container">
+        <!-- Area Sidebar -->
+        <aside class="sidebar" id="mySidebar">
+            <h3>Sidebar</h3>
+            <p style="margin-bottom: 30px; font-size: 14px; opacity: 0.7;">Lebar area ini 25%</p>
+            
+            <!-- Elemen Fixed yang ingin kita atur lebarnya -->
+            <div class="menu-fixed" id="myFixedMenu">
+                📌 Menu Fixed Ini Mengikuti Lebar Sidebar!
+            </div>
+        </aside>
+
+        <!-- Area Konten Utama -->
+        <main class="main-content">
+            <h2>Konten Utama</h2>
+            <p>Coba ubah ukuran (resize) browser Anda. Elemen berwarna merah di sidebar akan otomatis menyesuaikan lebarnya secara real-time mengikuti lebar kotak biru tua.</p>
+        </main>
     </div>
 
-
-     Memuat Chart.js dari CDN
+    <!-- JavaScript untuk Sinkronisasi Otomatis -->
     <script>
-        const ctx = document.getElementById('myChart');
+        const sidebar = document.getElementById('mySidebar');
+        const fixedMenu = document.getElementById('myFixedMenu');
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [10, 13, 2, 5, 20, 17],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script> -->
+        function sesuaikanLebarMenu() {
+            // 1. Ambil info ukuran sidebar saat ini (termasuk desimal akibat persentase)
+            const gayaSidebar = window.getComputedStyle(sidebar);
+            
+            // 2. Hitung lebar bersih bagian dalam sidebar (dikurangi padding kiri & kanan)
+            const paddingKiri = parseFloat(gayaSidebar.paddingLeft);
+            const paddingKanan = parseFloat(gayaSidebar.paddingRight);
+            const lebarBersihSidebar = sidebar.clientWidth - paddingKiri - paddingKanan;
 
-<!-- Format: https://unavatar.io{DOMAIN} -->
+            // 3. Terapkan lebar tersebut ke elemen fixed
+            fixedMenu.style.width = lebarBersihSidebar + 'px';
+        }
 
-
-
+        // Jalankan fungsi saat halaman selesai dimuat
+        window.addEventListener('DOMContentLoaded', sesuaikanLebarMenu);
+        
+        // Jalankan fungsi setiap kali ukuran browser berubah (resize)
+        window.addEventListener('resize', sesuaikanLebarMenu);
+    </script>
 </body>
-
 </html>

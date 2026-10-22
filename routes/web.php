@@ -59,6 +59,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/website', [WebsiteController::class, 'store'])
         ->name('website.store');
 
+    Route::post('/admin/website/import', [WebsiteController::class, 'import'])
+        ->name('website.import');
+
 
     // CEK SATU WEBSITE
     Route::post('/admin/website/{website}/check', [MonitoringController::class, 'check'])

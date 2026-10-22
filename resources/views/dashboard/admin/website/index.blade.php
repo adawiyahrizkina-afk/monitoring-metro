@@ -4,6 +4,13 @@
 
 @section('content')
 
+@if (session('success'))
+<div class="card" role="status">{{ session('success') }}</div>
+@endif
+@if (session('warning'))
+<div class="card" role="status">{{ session('warning') }}</div>
+@endif
+
 <div class="page-header">
 
     <h1>Daftar Website</h1>
@@ -239,6 +246,28 @@
                 </button>
 
             </div>
+        </form>
+
+        <hr>
+
+        <h2>Tambah dari file CSV</h2>
+        <p class="description">
+            Unggah CSV yang memiliki kolom "Link / Subdomain" dan "Kategori / Instansi".
+            Nama website diambil dari bagian domain sebelum titik pertama; URL akan menggunakan HTTPS.
+            Baris tanpa instansi, domain tidak valid, atau duplikat akan dilewati.
+        </p>
+        <form action="{{ route('website.import') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <label for="website_csv">File daftar website (.csv, maksimal 10 MB)</label>
+            <input
+                id="website_csv"
+                type="file"
+                name="file"
+                accept=".csv,text/csv"
+                required>
+            <button type="submit" class="btn" style="width: 100%;">
+                Import Website dari CSV
+            </button>
         </form>
     </div>
 
