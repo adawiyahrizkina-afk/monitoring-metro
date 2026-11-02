@@ -155,11 +155,6 @@
 
                             <td>
                                 <span class="website-name website-name-with-favicon">
-                                    <img
-                                        src="{{ $website->favicon_url }}"
-                                        alt=""
-                                        class="website-favicon"
-                                        onerror="this.hidden = true">
                                     {{ $website->nama_website }}
                                 </span>
                             </td>
@@ -239,7 +234,7 @@
                 </table>
 
             </div>
-            <div style="position:fixed; top: 20%; left: 20px; right: 20px; max-width: inherit; margin: 0; text-align: center;">
+            <div style="top: 20%; left: 20px; right: 20px; max-width: inherit; margin: 0; text-align: center;">
                 <div class="pop-up" id="tambah" aria-labelledby="tambahWebsiteTitle" aria-hidden="true">
 
                     <h1 id="tambahWebsiteTitle">Tambah Website</h1>
@@ -323,6 +318,28 @@
 
                         </div>
                     </form>
+
+                    <hr>
+
+                    <h2>Tambah dari file CSV</h2>
+                    <p class="description">
+                        Unggah CSV yang memiliki kolom "Link / Subdomain" dan "Kategori / Instansi".
+                        Nama website diambil dari bagian domain sebelum titik pertama; URL akan menggunakan HTTPS.
+                        Baris tanpa instansi, domain tidak valid, atau duplikat akan dilewati.
+                    </p>
+                    <form action="{{ route('website.import') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <label for="website_csv">File daftar website (.csv, maksimal 10 MB)</label>
+                        <input
+                            id="website_csv"
+                            type="file"
+                            name="file"
+                            accept=".csv,text/csv"
+                            required>
+                        <button type="submit" class="btn" style="width: 100%;">
+                            Import Website dari CSV
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -371,7 +388,9 @@
             return;
         }
 
-        popup.addEventListener('animationend', selesaiMenutup, { once: true });
+        popup.addEventListener('animationend', selesaiMenutup, {
+            once: true
+        });
         popupCloseTimer = window.setTimeout(selesaiMenutup, 250);
     }
 

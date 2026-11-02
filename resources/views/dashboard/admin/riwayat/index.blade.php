@@ -38,15 +38,15 @@
     </div>
 </div>
 
-<div class="incident-website-list card" style="display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr);">
+<div class="incident-website-list card" style="display: grid; gap: 10px; grid-template-columns: repeat(3, 1fr);">
     @forelse ($websites as $website)
-    <article class="card-child incident-website-card">
+    <article class="card-child incident-website-card" style="max-width: 18rem; max-height: 200px;">
         <div class="incident-website-heading">
             <img
                 src="{{ $website->favicon_url }}"
                 alt=""
                 class="website-favicon"
-                onerror="this.hidden = true">
+                onerror="this.hidden = true" style="width: 5rem; height: 5rem; object-fit: cover;">
             <div>
                 <h2>{{ $website->nama_website }}</h2>
                 <a href="{{ $website->url }}" target="_blank" rel="noopener noreferrer" class="url">{{ $website->url }}</a>
@@ -70,7 +70,7 @@
     @endforelse
 </div>
 
-<div style="margin-top: 20px;">
+<div class="riwayat-pagination" style="margin-top: 20px;">
     {{ $websites->links() }}
 </div>
 

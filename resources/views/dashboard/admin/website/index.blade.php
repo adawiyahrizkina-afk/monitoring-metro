@@ -23,7 +23,7 @@
 <p id="websiteCheckStatus" class="website-check-status" aria-live="polite"></p>
 
 
-<div class="card" style="position: relative;">
+<div class="card" style="position: relative; max-width: 100%;">
 
     <button type="button" class="btn" data-open-add-website>
         + Tambah Website
@@ -36,7 +36,8 @@
         placeholder="Cari website atau instansi..."
         onkeyup="searchTable()" style="background-color: white;">
 
-    <table id="websiteTable">
+    <div class="table-wrapper">
+        <table id="websiteTable">
 
         <thead>
 
@@ -71,11 +72,6 @@
 
                 <td>
                     <span class="website-name-with-favicon">
-                        <img
-                            src="{{ $website->favicon_url }}"
-                            alt=""
-                            class="website-favicon"
-                            onerror="this.hidden = true">
                         {{ $website->nama_website ?? '-' }}
                     </span>
                 </td>
@@ -162,7 +158,8 @@
             @endforelse
 
         </tbody>
-    </table>
+        </table>
+    </div>
 
     <div class="pop-up" id="tambah" aria-labelledby="tambahWebsiteTitle" aria-hidden="true">
 

@@ -386,7 +386,8 @@ body {
 }
 
 table {
-    width: 100%;
+    max-width: 100%;
+    scroll-behavior: smooth;
     border-collapse: collapse;
 }
 
@@ -959,6 +960,60 @@ footer {
     cursor: default;
 }
 
+.riwayat-pagination nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    color: #58645f;
+    font-size: 13px;
+}
+
+.riwayat-pagination nav > div:first-child {
+    display: none;
+}
+
+.riwayat-pagination nav > div:nth-child(2) {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.riwayat-pagination nav > div:nth-child(2) > div:last-child > span {
+    display: inline-flex;
+}
+
+.riwayat-pagination a,
+.riwayat-pagination nav > div:nth-child(2) > div:last-child > span > span {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 11px;
+    border: 1px solid #ccd6d0;
+    background: #fff;
+    color: #27342e;
+    text-decoration: none;
+}
+
+.riwayat-pagination a:hover {
+    background: #f1f5f2;
+}
+
+.riwayat-pagination nav > div:nth-child(2) > div:last-child > span > span {
+    background: #e6f4e9;
+    font-weight: 700;
+}
+
+.riwayat-pagination svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
 .monitoring-chart-canvas-wrap {
     position: relative;
     width: 100%;
@@ -1110,6 +1165,16 @@ footer {
     .monitoring-pagination {
         flex-wrap: wrap;
         justify-content: flex-start;
+    }
+
+    .riwayat-pagination nav > div:nth-child(2) {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .riwayat-pagination nav > div:nth-child(2) > div:last-child {
+        max-width: 100%;
+        overflow-x: auto;
     }
 
     .monitoring-pagination span {

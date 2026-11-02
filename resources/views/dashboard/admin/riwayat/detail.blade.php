@@ -29,7 +29,6 @@
                     <th>Status</th>
                     <th>Waktu respons</th>
                     <th>Detail laporan</th>
-                    <th>URL yang diperiksa</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,13 +44,6 @@
                         {{ $log->response_time === null ? '-' : number_format($log->response_time / 1000, 2, ',', '.') . ' detik' }}
                     </td>
                     <td>{{ $log->keterangan ?: 'Tidak ada keterangan.' }}</td>
-                    <td>
-                        @if ($log->url)
-                        <a href="{{ $log->url }}" target="_blank" rel="noopener noreferrer" class="url">{{ $log->url }}</a>
-                        @else
-                        -
-                        @endif
-                    </td>
                 </tr>
                 @empty
                 <tr>
@@ -62,7 +54,7 @@
         </table>
     </div>
 
-    <div style="margin-top: 20px;">
+    <div class="riwayat-pagination" style="margin-top: 20px;">
         {{ $logs->links() }}
     </div>
 </div>
