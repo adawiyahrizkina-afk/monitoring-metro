@@ -31,10 +31,15 @@
                 </h1>
                 @if(session('error-login'))
 
-                <div class="error">
+                <div class="error" role="alert">
                     {{ session('error-login') }}
                 </div>
 
+                @endif
+                @if($errors->any())
+                <div class="error" role="alert">
+                    {{ $errors->first() }}
+                </div>
                 @endif
 
                 <form
@@ -51,6 +56,7 @@
                         type="email"
                         name="email"
                         placeholder="Masukkan email"
+                        value="{{ old('email') }}"
                         required>
 
                     <label>

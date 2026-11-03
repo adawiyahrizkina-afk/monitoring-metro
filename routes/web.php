@@ -158,7 +158,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/admin/riwayat', [MonitoringController::class, 'destroyAllLogs'])
         ->name('riwayat.destroy');
 
-
     // LOGOUT
     Route::post('/admin/logout', [AdminController::class, 'logout'])
         ->name('logout');

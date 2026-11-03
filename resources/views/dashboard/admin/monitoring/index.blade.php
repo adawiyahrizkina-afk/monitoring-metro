@@ -37,8 +37,7 @@
                     type="search"
                     id="chartWebsiteSearch"
                     class="search"
-                    placeholder="Ketik nama website"
-                    onkeyup="searchTable()">
+                    placeholder="Ketik nama website">
             </label>
             <label class="chart-select-label" for="chartWebsiteSelect">Website
                 <select id="chartWebsiteSelect">
@@ -97,6 +96,7 @@
                     data-website-id="{{ $website->id }}"
                     data-website-name="{{ $website->nama_website }}"
                     data-instansi="{{ $website->instansi }}"
+                    data-website-url="{{ $website->url }}"
                     data-check-url="{{ route('website.check', $website) }}"
                     tabindex="0"
                     aria-label="Pilih {{ $website->nama_website }} untuk melihat riwayat dan memeriksa status">
@@ -104,14 +104,14 @@
                         <strong>{{ $website->nama_website }}</strong>
                         <span>{{ $website->instansi }}</span>
                     </td>
-                    <td data-field="status" data-status="{{ $website->status }}">{{ $website->status }}</td>
+                    <td data-field="status" data-status="{{ $website->status ?: 'Belum Dicek' }}">{{ $website->status ?: 'Belum Dicek' }}</td>
                     <td data-field="response">
                         {{ $website->response_time === null ? '-' : number_format($website->response_time / 1000, 2, ',', '.') . ' detik' }}
                     </td>
                     <td data-field="checked-at">{{ $website->last_checked_at?->format('d/m/Y H:i:s') ?? '-' }}</td>
                     <td>
                         <button type="button" class="btn btn-sm btn-primary" data-check-website>Periksa</button>
-                        <a href="{{ route('riwayat.index') }}" class="detail" style="text-decoration: none;">Detail</a>
+                        <a href="{{ route('riwayat.website', $website) }}" class="detail" style="text-decoration: none;">Detail</a>
                     </td>
                 </tr>
                 @empty
@@ -147,6 +147,15 @@
     const chartInfo = document.getElementById('chartWebsiteInfo');
     const chartEvents = document.getElementById('chartEvents');
     const websiteRows = document.getElementById('websiteTable');
+    const websiteRowElements = Array.from(websiteRows.querySelectorAll('tr[data-website-id]'));
+    const websiteSearch = document.getElementById('searchWebsite');
+    const statusFilter = document.getElementById('statusFilter');
+    const websiteResultCount = document.getElementById('websiteResultCount');
+    const websiteEmptyState = document.getElementById('websiteEmptyState');
+    const pageSizeSelect = document.getElementById('pageSize');
+    const pageStatus = document.getElementById('pageStatus');
+    const previousPageButton = document.getElementById('previousPage');
+    const nextPageButton = document.getElementById('nextPage');
     const realtimeForm = document.getElementById('realtimeCheckForm');
     const realtimeButton = document.getElementById('realtimeCheckButton');
     const realtimeStatus = document.getElementById('realtimeStatus');
@@ -156,6 +165,7 @@
     const monitoringIntervalMilliseconds = monitoringIntervalSeconds * 1000;
     let isChecking = false;
     let refreshTimer = null;
+    let currentPage = 1;
 
     Object.keys(historyByWebsite).forEach((websiteId) => {
         historyByWebsite[websiteId] = historyByWebsite[websiteId].slice(-chartHistoryLimit);
@@ -229,6 +239,38 @@
         return monitoringIntervalSeconds % 60 === 0
             ? `${monitoringIntervalSeconds / 60} menit`
             : `${monitoringIntervalSeconds} detik`;
+    }
+
+    function renderWebsiteRows() {
+        const query = websiteSearch.value.trim().toLocaleLowerCase('id-ID');
+        const selectedStatus = statusFilter.value;
+        const matchingRows = websiteRowElements.filter((row) => {
+            const searchText = [
+                row.dataset.websiteName,
+                row.dataset.instansi,
+                row.dataset.websiteUrl
+            ].join(' ').toLocaleLowerCase('id-ID');
+            const status = row.querySelector('[data-field="status"]').dataset.status || 'Belum Dicek';
+
+            return searchText.includes(query) && (!selectedStatus || status === selectedStatus);
+        });
+        const pageSize = Number(pageSizeSelect.value);
+        const pageCount = Math.max(1, Math.ceil(matchingRows.length / pageSize));
+        currentPage = Math.min(currentPage, pageCount);
+
+        const startIndex = (currentPage - 1) * pageSize;
+        const visibleRows = new Set(matchingRows.slice(startIndex, startIndex + pageSize));
+        websiteRowElements.forEach((row) => {
+            row.hidden = !visibleRows.has(row);
+        });
+
+        websiteResultCount.textContent = matchingRows.length === 0
+            ? 'Tidak ada website yang cocok.'
+            : `Menampilkan ${startIndex + 1}-${Math.min(startIndex + pageSize, matchingRows.length)} dari ${matchingRows.length} website`;
+        websiteEmptyState.hidden = matchingRows.length > 0 || websiteRowElements.length === 0;
+        pageStatus.textContent = `Halaman ${currentPage} dari ${pageCount}`;
+        previousPageButton.disabled = currentPage === 1;
+        nextPageButton.disabled = currentPage === pageCount;
     }
 
     function renderEvents(history) {
@@ -326,6 +368,7 @@
             });
             historyByWebsite[result.id] = history.slice(-chartHistoryLimit);
             if (chartSelect.value === String(result.id)) updateChart(result.id);
+            renderWebsiteRows();
             realtimeStatus.textContent = `${result.nama_website} diperiksa pada ${formatCheckTime(result.last_checked_at)}.`;
         } catch (error) {
             statusCell.textContent = 'Gagal diperiksa';
@@ -375,6 +418,7 @@
             });
             const data = await readCheckResponse(response);
             data.websites.forEach(updateWebsiteResult);
+            renderWebsiteRows();
             if (chartSelect.value) updateChart(chartSelect.value);
             realtimeStatus.textContent = `Pembaruan terakhir ${formatCheckTime(data.checked_at)}. Pengecekan otomatis setiap ${formatMonitoringInterval()}.`;
         } catch (error) {
@@ -424,6 +468,26 @@
 
     chartSearch.addEventListener('input', filterChartOptions);
     chartSelect.addEventListener('change', () => updateChart(chartSelect.value));
+    websiteSearch.addEventListener('input', () => {
+        currentPage = 1;
+        renderWebsiteRows();
+    });
+    statusFilter.addEventListener('change', () => {
+        currentPage = 1;
+        renderWebsiteRows();
+    });
+    pageSizeSelect.addEventListener('change', () => {
+        currentPage = 1;
+        renderWebsiteRows();
+    });
+    previousPageButton.addEventListener('click', () => {
+        currentPage -= 1;
+        renderWebsiteRows();
+    });
+    nextPageButton.addEventListener('click', () => {
+        currentPage += 1;
+        renderWebsiteRows();
+    });
     websiteRows.addEventListener('click', (event) => {
         const row = event.target.closest('tr[data-website-id]');
         if (!row) return;
@@ -447,6 +511,7 @@
         chartSelect.value = requestedWebsiteId;
     }
 
+    renderWebsiteRows();
     if (chartSelect.value) updateChart(chartSelect.value);
     refreshMonitoring();
     scheduleNextRefresh();

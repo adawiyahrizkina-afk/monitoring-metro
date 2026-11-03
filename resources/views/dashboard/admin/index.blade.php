@@ -401,5 +401,9 @@
     function batal() {
         tutupPopup(document.getElementById('tambah'));
     }
+
+    @if($errors->any())
+        bukaPopup(document.getElementById('tambah'));
+    @endif
 </script>
 @endsection

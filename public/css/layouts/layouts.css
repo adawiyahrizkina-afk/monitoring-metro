@@ -613,7 +613,7 @@ footer {
     padding: 10px;
     border-radius: 10px;
     text-align: center;
-    width: 20rem;
+    /* width: 20rem; */
     min-height: 22rem;
 }
 

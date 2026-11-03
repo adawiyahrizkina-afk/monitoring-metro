@@ -40,7 +40,7 @@
 
 <div class="incident-website-list card" style="display: grid; gap: 10px; grid-template-columns: repeat(3, 1fr);">
     @forelse ($websites as $website)
-    <article class="card-child incident-website-card" style="max-width: 18rem; max-height: 200px;">
+    <article class="card-child incident-website-card" style="max-width: 200rem; max-height: 200px;">
         <div class="incident-website-heading">
             <img
                 src="{{ $website->favicon_url }}"
